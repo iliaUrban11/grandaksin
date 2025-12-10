@@ -4,7 +4,6 @@
   <meta charset="utf-8">
   <title>Грандаксин против</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  
   <script src="https://aframe.io/releases/1.6.0/aframe.min.js"></script>
   <script src="https://raw.githack.com/AR-js-org/AR.js/3.4.7/aframe/build/aframe-ar-nft.js"></script>
 
@@ -14,7 +13,7 @@
     #startPage,#endScreen{position:fixed;inset:0;z-index:2000;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;padding:20px;}
     #startPage{background:rgba(255,255,255,0.96);color:#027ACA;}
     #endScreen{background:rgba(2,122,202,0.98);display:none;}
-    #logo{font-size:3.2em;font-weight:900;margin-bottom:20px;letter-spacing:1px;}
+    #logo{font-size:3.2em;font-weight:900;margin-bottom:20px;}
     #rules{font-size:1.4em;line-height:1.6;margin-bottom:50px;max-width:90%;}
     button{padding:18px 70px;background:#027ACA;color:white;font-size:1.7em;border:none;border-radius:50px;cursor:pointer;box-shadow:0 12px 30px rgba(2,122,202,0.5);transition:0.3s;}
     #playAgainBtn{background:white;color:#027ACA;font-weight:bold;}
@@ -51,7 +50,7 @@
 
   <div id="endScreen">
     <div id="endTitle">Отлично сыграно!</div>
-    <div id="endProgress" style="width:90%;max-width:500px;margin:20px 0;">
+    <div id="endProgress" style="width:90%;max-width:500px;margin:30px 0;">
       <div class="bar"><div class="label">Нервозность</div><div id="end-nerv-fill" class="fill"></div></div>
       <div class="bar"><div class="label">Тревога</div><div id="end-anx-fill" class="fill"></div></div>
       <div class="bar"><div class="label">Стресс</div><div id="end-stress-fill" class="fill"></div></div>
@@ -85,7 +84,6 @@
     </a-camera>
   </a-scene>
 
-  <!-- Главный скрипт — type="module" обходит CSP -->
   <script type="module">
     const scores = {nerv: 0, anx: 0, stress: 0};
     const sceneEl = document.querySelector('a-scene');
@@ -93,25 +91,43 @@
     let gameActive = false;
     let gameTimer;
 
-    // 30 фиксированных позиций — по 10 каждого типа
+    // === 30 КРАСИВО РАСПРЕДЕЛЁННЫХ ПОЗИЦИЙ ===
     const positions = [
-      {type:'nerv',   pos:' 8 2.2 -8',   scale:0.35}, {type:'nerv',   pos:'-6 1.8 -7',   scale:0.40},
-      {type:'nerv',   pos:' 4 3.0 -10',  scale:0.30}, {type:'nerv',   pos:'-9 2.5 -11',  scale:0.45},
-      {type:'nerv',   pos:'10 1.5 -9',   scale:0.38}, {type:'nerv',   pos:'-3 2.8 -6',   scale:0.32},
-      {type:'nerv',   pos:' 6 2.0 -12',  scale:0.42}, {type:'nerv',   pos:'-11 1.9 -8',  scale:0.36},
-      {type:'nerv',   pos:' 2 2.4 -14',  scale:0.40}, {type:'nerv',   pos:'-7 3.2 -13',  scale:0.33},
+      // Нервозность (красные)
+      {type:'nerv',   pos:' 5.0  1.2 -6',   scale:0.55},
+      {type:'nerv',   pos:'-7.5  3.8 -8',   scale:0.30},
+      {type:'nerv',   pos:' 3.2  4.2 -12',  scale:0.40},
+      {type:'nerv',   pos:'-10  2.0 -10',  scale:0.60},
+      {type:'nerv',   pos:' 9.0  0.8 -7',   scale:0.50},
+      {type:'nerv',   pos:'-4.0  3.5 -14',  scale:0.35},
+      {type:'nerv',   pos:' 6.5  2.7 -11',  scale:0.45},
+      {type:'nerv',   pos:'-8.5  1.1 -13', scale:0.38},
+      {type:'nerv',   pos:' 2.0  1.8 -9',   scale:0.62},
+      {type:'nerv',   pos:'-6.0  4.0 -6',   scale:0.28},
 
-      {type:'anx',    pos:' 7 1.8 -6',   scale:0.38}, {type:'anx',    pos:'-8 2.6 -9',   scale:0.42},
-      {type:'anx',    pos:' 5 2.2 -11',  scale:0.35}, {type:'anx',    pos:'-4 1.6 -8',   scale:0.40},
-      {type:'anx',    pos:' 9 2.8 -10',  scale:0.37}, {type:'anx',    pos:'-10 2.0 -12', scale:0.44},
-      {type:'anx',    pos:' 3 1.9 -7',   scale:0.36}, {type:'anx',    pos:'-5 3.0 -14',  scale:0.39},
-      {type:'anx',    pos:'11 2.3 -9',   scale:0.41}, {type:'anx',    pos:'-2 2.5 -10',  scale:0.34},
+      // Тревога (зелёные)
+      {type:'anx',    pos:' 8.0  3.0 -9',   scale:0.58},
+      {type:'anx',    pos:'-9.0  1.5 -11',  scale:0.42},
+      {type:'anx',    pos:' 4.5  2.5 -13',  scale:0.33},
+      {type:'anx',    pos:'-5.5  0.9 -8',   scale:0.65},
+      {type:'anx',    pos:' 10  4.0 -10',   scale:0.48},
+      {type:'anx',    pos:'-3.0  2.2 -7',   scale:0.55},
+      {type:'anx',      pos:' 7.0  1.6 -14',  scale:0.37},
+      {type:'anx',    pos:'-11  3.3 -12',  scale:0.50},
+      {type:'anx',    pos:' 1.5  3.9 -10',  scale:0.30},
+      {type:'anx',    pos:'-7.0  2.8 -15',  scale:0.45},
 
-      {type:'stress', pos:' 6 2.5 -9',   scale:0.40}, {type:'stress', pos:'-7 1.7 -10',  scale:0.37},
-      {type:'stress', pos:' 4 2.8 -13',  scale:0.43}, {type:'stress', pos:'-9 2.2 -7',   scale:0.36},
-      {type:'stress', pos:' 8 1.9 -12',  scale:0.39}, {type:'stress', pos:'-3 2.6 -11',  scale:0.41},
-      {type:'stress', pos:'10 2.1 -8',   scale:0.38}, {type:'stress', pos:'-6 3.1 -13',  scale:0.42},
-      {type:'stress', pos:' 2 2.3 -9',   scale:0.35}, {type:'stress', pos:'-8 2.7 -14',  scale:0.40}
+      // Стресс (синие)
+      {type:'stress', pos:' 6.0  1.0 -10',  scale:0.60},
+      {type:'stress', pos:'-8.0  4.5 -9',   scale:0.35},
+      {type:'stress', pos:' 3.8  3.2 -15',  scale:0.48},
+      {type:'stress', pos:'-6.5  2.0 -12',  scale:0.55},
+      {type:'stress', pos:' 9.5  2.8 -8',   scale:0.40},
+      {type:'stress', pos:'-4.5  4.0 -11',  scale:0.38},
+      {type:'stress', pos:' 5.0  3.7 -7',   scale:0.62},
+      {type:'stress', pos:'-10  1.8 -14',  scale:0.45},
+      {type:'stress', pos:' 1.0  2.4 -13',  scale:0.52},
+      {type:'stress', pos:'-9.0  3.6 -6',   scale:0.30}
     ];
 
     document.getElementById('startGameBtn')?.addEventListener('click', startGame);
