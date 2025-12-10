@@ -30,7 +30,7 @@
 <body>
 
   <div id="startPage">
-    <div id="logo">ГРАНДАКСИН ПРОТИВ</div>
+    <div id="logo">ГРАНДАКСИН ПРОТИВ1</div>
     <div id="rules">Совместите цель с летающим симптомом<br>и нажмите на экран.<br><br>Сбейте как можно больше за 30 секунд!</div>
     <button id="startGameBtn">НАЧАТЬ</button>
   </div>
@@ -85,19 +85,44 @@
     let modelsGroup = document.getElementById('models');
     let gameTimer, timeLeft = 30, gameActive = false;
 
-    // 30 фиксированных позиций перед игроком (от 3 до 8 метров, в полусфере)
-    const fixedPositions = [];
-    for (let i = 0; i < 30; i++) {
-      const distance = 3 + Math.random() * 5; // 3–8 метров
-      const yaw = (Math.random() * 80 - 40) * Math.PI / 180; // ±40° по горизонтали
-      const pitch = (Math.random() * 40 - 15) * Math.PI / 180; // от -15° до +25° по вертикали
-      const x = Math.sin(yaw) * Math.cos(pitch) * distance;
-      const y = Math.sin(pitch) * distance + 1.5;
-      const z = -Math.cos(yaw) * Math.cos(pitch) * distance;
-      fixedPositions.push({x, y, z});
-    }
+    // 30 фиксированных моделей (по 10 каждого типа)
+    const modelsData = [
+      // nerv
+      {type:'nerv', x:-5.5, y:3.2, z:-7, scale:0.42},
+      {type:'nerv', x:-3.8, y:1.8, z:-9, scale:0.35},
+      {type:'nerv', x:-6.8, y:4.0, z:-11, scale:0.48},
+      {type:'nerv', x:-2.5, y:2.5, z:-5.5, scale:0.33},
+      {type:'nerv', x:-7.5, y:2.0, z:-13, scale:0.5},
+      {type:'nerv', x:-4.2, y:3.8, z:-6, scale:0.38},
+      {type:'nerv', x:-6.0, y:1.5, z:-10, scale:0.4},
+      {type:'nerv', x:-3.0, y:2.8, z:-12, scale:0.36},
+      {type:'nerv', x:-5.0, y:4.5, z:-14, scale:0.45},
+      {type:'nerv', x:-4.5, y:1.2, z:-8, scale:0.37},
 
-    let availablePositions = [...fixedPositions];
+      // anx
+      {type:'anx', x:5.8, y:3.0, z:-7.5, scale:0.44},
+      {type:'anx', x:4.0, y:1.9, z:-9.5, scale:0.36},
+      {type:'anx', x:7.0, y:4.2, z:-11.5, scale:0.49},
+      {type:'anx', x:2.8, y:2.6, z:-6, scale:0.34},
+      {type:'anx', x:7.8, y:2.1, z:-13.5, scale:0.52},
+      {type:'anx', x:4.5, y:3.6, z:-8, scale:0.41},
+      {type:'anx', x:6.2, y:1.4, z:-10.5, scale:0.39},
+      {type:'anx', x:3.5, y:4.0, z:-14, scale:0.47},
+      {type:'anx', x:5.5, y:2.9, z:-5.5, scale:0.43},
+      {type:'anx', x:4.8, y:1.1, z:-12, scale:0.35},
+
+      // stress
+      {type:'stress', x:0, y:3.5, z:-10, scale:0.5},
+      {type:'stress', x:1.5, y:2.2, z:-6.5, scale:0.37},
+      {type:'stress', x:-1.5, y:3.0, z:-8.5, scale:0.39},
+      {type:'stress', x:0.8, y:4.2, z:-12.5, scale:0.48},
+      {type:'stress', x:-0.8, y:1.6, z:-14.5, scale:0.42},
+      {type:'stress', x:0, y:2.4, z:-5.5, scale:0.34},
+      {type:'stress', x:2.2, y:3.2, z:-11, scale:0.46},
+      {type:'stress', x:-2.2, y:1.9, z:-9, scale:0.38},
+      {type:'stress', x:1.8, y:2.7, z:-13, scale:0.44},
+      {type:'stress', x:-1.8, y:4.0, z:-7.5, scale:0.47}
+    ];
 
     document.getElementById('startGameBtn').addEventListener('click', startGame);
     document.getElementById('playAgainBtn').addEventListener('click', () => location.reload());
@@ -111,7 +136,7 @@
       document.getElementById('timer').textContent = '30';
       gameActive = true;
       updateScales();
-      availablePositions = [...fixedPositions];
+
       if (sceneEl.hasLoaded) initAR();
       else sceneEl.addEventListener('loaded', initAR);
 
@@ -125,7 +150,6 @@
     function endGame() {
       gameActive = false;
       clearInterval(gameTimer);
-      modelsGroup.innerHTML = '';
       setTimeout(() => {
         document.getElementById('nerv-result').innerHTML = `Нервозность: <b>${scores.nerv}</b>`;
         document.getElementById('anx-result').innerHTML = `Тревога: <b>${scores.anx}</b>`;
@@ -147,25 +171,17 @@
     }
 
     function initAR() {
-      // 10 nerv + 10 anx + 10 stress = 30
-      for(let i=0; i<10; i++) spawnModel('nerv');
-      for(let i=0; i<10; i++) spawnModel('anx');
-      for(let i=0; i<10; i++) spawnModel('stress');
+      modelsData.forEach(createModel);
     }
 
-    function spawnModel(type) {
-      if (!gameActive || availablePositions.length === 0) return;
-
-      const posIndex = Math.floor(Math.random() * availablePositions.length);
-      const pos = availablePositions.splice(posIndex, 1)[0];
+    function createModel(data) {
+      if (!gameActive) return;
 
       const wrapper = document.createElement('a-entity');
       wrapper.classList.add('clickable');
-      wrapper.dataset.type = type;
-      wrapper.dataset.posIndex = fixedPositions.indexOf(pos);
 
       const model = document.createElement('a-entity');
-      model.setAttribute('gltf-model', `#${type}`);
+      model.setAttribute('gltf-model', `#${data.type}`);
       wrapper.appendChild(model);
 
       const explosion = document.createElement('a-entity');
@@ -173,10 +189,10 @@
       explosion.setAttribute('visible', 'false');
       wrapper.appendChild(explosion);
 
-      const scale = 0.25 + Math.random() * 0.25;
-      wrapper.setAttribute('scale', `${scale} ${scale} ${scale}`);
-      wrapper.setAttribute('position', `${pos.x} ${pos.y} ${pos.z}`);
+      wrapper.setAttribute('position', `${data.x} ${data.y} ${data.z}`);
+      wrapper.setAttribute('scale', `${data.scale} ${data.scale} ${data.scale}`);
 
+      // Billboard
       wrapper.addEventListener('model-loaded', () => {
         const tick = () => {
           if (!wrapper.parentNode) return;
@@ -187,11 +203,12 @@
         tick();
       });
 
+      // Уничтожение без респавна
       wrapper.addEventListener('click', function hit() {
         if (!gameActive) return;
         wrapper.removeEventListener('click', hit);
 
-        scores[type]++;
+        scores[data.type]++;
         updateScales();
 
         model.setAttribute('visible', 'false');
@@ -201,11 +218,8 @@
         sound.setAttribute('sound', 'src:#hit-sound;autoplay:true;volume:0.9');
         wrapper.appendChild(sound);
 
-        setTimeout(() => {
-          wrapper.remove();
-          availablePositions.push(fixedPositions[wrapper.dataset.posIndex]);
-          setTimeout(() => spawnModel(type), 600);
-        }, 1200);
+        // Удаляем навсегда через 1.3 сек (время на взрыв)
+        setTimeout(() => wrapper.remove(), 1300);
       });
 
       modelsGroup.appendChild(wrapper);
