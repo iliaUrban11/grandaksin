@@ -32,7 +32,7 @@
 <body>
 
   <div id="startPage">
-    <div id="logo">ГРАНДАКСИН ПРОТИВ11</div>
+    <div id="logo">ГРАНДАКСИН ПРОТИВ</div>
     <div id="rules">Совместите цель с летающим симптомом<br>и нажмите на экран.<br><br>Сбейте как можно больше за 30 секунд!</div>
     <button id="startGameBtn">НАЧАТЬ</button>
   </div>
@@ -64,10 +64,11 @@
   </div>
 
   <a-scene embedded arjs="trackingMethod:best;sourceType:webcam;debugUIEnabled:false" renderer="antialias:true" vr-mode-ui="enabled:false" device-orientation-permission-ui="enabled:false" style="display:none" raycaster="objects:.clickable" cursor="rayOrigin:mouse">
-    <a-assets timeout="60000">
-      <a-asset-item id="nerv" src="red.glb"></a-asset-item>
-      <a-asset-item id="a" src="green.glb"></a-asset-item>
-      <a-asset-item id="s" src="blue.glb"></a-asset-item>
+    
+    <a-assets timeout="80000">
+      <a-asset-item id="nerv"    src="red.glb"></a-asset-item>
+      <a-asset-item id="anx"     src="green.glb"></a-asset-item>
+      <a-asset-item id="stress"  src="blue.glb"></a-asset-item>
       <a-asset-item id="destruction" src="destruction.glb"></a-asset-item>
       <audio id="hit-sound" src="hit.mp3" preload="auto"></audio>
     </a-assets>
@@ -88,43 +89,43 @@
     let gameActive = false;
     let gameTimer;
 
-    // === 30 ЖЁСТКО ЗАДАННЫХ ПОЗИЦИЙ (по 10 на тип) ===
+    // 30 жёстко заданных позиций (по 10 каждого типа)
     const positions = [
-      // Нервозность (red.glb) — 10 шт.
-      {type:'n', pos:'8 2.2 -8',   scale:0.35},
-      {type:'n', pos:'-6 1.8 -7',  scale:0.4},
-      {type:'n', pos:'4 3.0 -10',  scale:0.3},
-      {type:'n', pos:'-9 2.5 -11', scale:0.45},
-      {type:'n', pos:'10 1.5 -9',  scale:0.38},
-      {type:'n', pos:'-3 2.8 -6',  scale:0.32},
-      {type:'n', pos:'6 2.0 -12', scale:0.42},
-      {type:'n', pos:'-11 1.9 -8', scale:0.36},
-      {type:'n', pos:'2 2.4 -14',  scale:0.4},
-      {type:'n', pos:'-7 3.2 -13', scale:0.33},
+      // Нервозность (red.glb)
+      {type:'nerv',   pos:' 8 2.2 -8',   scale:0.35},
+      {type:'nerv',   pos:'-6 1.8 -7',   scale:0.40},
+      {type:'nerv',   pos:' 4 3.0 -10',  scale:0.30},
+      {type:'nerv',   pos:'-9 2.5 -11',  scale:0.45},
+      {type:'nerv',   pos:'10 1.5 -9',   scale:0.38},
+      {type:'nerv',   pos:'-3 2.8 -6',   scale:0.32},
+      {type:'nerv',   pos:' 6 2.0 -12',  scale:0.42},
+      {type:'nerv',   pos:'-11 1.9 -8',  scale:0.36},
+      {type:'nerv',   pos:' 2 2.4 -14',  scale:0.40},
+      {type:'nerv',   pos:'-7 3.2 -13',  scale:0.33},
 
-      // Тревога (green.glb) — 10 шт.
-      {type:'a', pos:'7 1.8 -6',   scale:0.38},
-      {type:'a', pos:'-8 2.6 -9',  scale:0.42},
-      {type:'a', pos:'5 2.2 -11',  scale:0.35},
-      {type:'a', pos:'-4 1.6 -8',  scale:0.4},
-      {type:'a', pos:'9 2.8 -10',  scale:0.37},
-      {type:'a', pos:'-10 2.0 -12',scale:0.44},
-      {type:'a', pos:'3 1.9 -7',   scale:0.36},
-      {type:'a', pos:'-5 3.0 -14', scale:0.39},
-      {type:'a', pos:'11 2.3 -9',  scale:0.41},
-      {type:'a', pos:'-2 2.5 -10', scale:0.34},
+      // Тревога (green.glb)
+      {type:'anx',    pos:' 7 1.8 -6',   scale:0.38},
+      {type:'anx',    pos:'-8 2.6 -9',   scale:0.42},
+      {type:'anx',    pos:' 5 2.2 -11',  scale:0.35},
+      {type:'anx',    pos:'-4 1.6 -8',   scale:0.40},
+      {type:'anx',    pos:' 9 2.8 -10',  scale:0.37},
+      {type:'anx',    pos:'-10 2.0 -12', scale:0.44},
+      {type:'anx',    pos:' 3 1.9 -7',   scale:0.36},
+      {type:'anx',    pos:'-5 3.0 -14',  scale:0.39},
+      {type:'anx',     pos:'11 2.3 -9',   scale:0.41},
+      {type:'anx',    pos:'-2 2.5 -10',  scale:0.34},
 
-      // Стресс (blue.glb) — 10 шт.
-      {type:'s', pos:'6 2.5 -9',   scale:0.4},
-      {type:'s', pos:'-7 1.7 -10', scale:0.37},
-      {type:'s', pos:'4 2.8 -13',  scale:0.43},
-      {type:'s', pos:'-9 2.2 -7',  scale:0.36},
-      {type:'s', pos:'8 1.9 -12',  scale:0.39},
-      {type:'s', pos:'-3 2.6 -11', scale:0.41},
-      {type:'s', pos:'10 2.1 -8',  scale:0.38},
-      {type:'s', pos:'-6 3.1.8 -13',scale:0.42},
-      {type:'s', pos:'2 2.3 -9',   scale:0.35},
-      {type:'s', pos:'-8 2.7 -14', scale:0.4}
+      // Стресс (blue.glb)
+      {type:'stress', pos:' 6 2.5 -9',   scale:0.40},
+      {type:'stress', pos:'-7 1.7 -10',  scale:0.37},
+      {type:'stress', pos:' 4 2.8 -13',  scale:0.43},
+      {type:'stress', pos:'-9 2.2 -7',   scale:0.36},
+      {type:'stress', pos:' 8 1.9 -12',  scale:0.39},
+      {type:'stress', pos:'-3 2.6 -11',  scale:0.41},
+      {type:'stress', pos:'10 2.1 -8',   scale:0.38},
+      {type:'stress', pos:'-6 3.1 -13',  scale:0.42},
+      {type:'stress', pos:' 2 2.3 -9',   scale:0.35},
+      {type:'stress', pos:'-8 2.7 -14',  scale:0.40}
     ];
 
     document.getElementById('startGameBtn').addEventListener('click', startGame);
@@ -135,14 +136,12 @@
       document.getElementById('gameUI').style.display = 'block';
       sceneEl.style.display = 'block';
 
+      // Сброс
       Object.keys(scores).forEach(k => scores[k] = 0);
-      document.getElementById('timer').textContent = '30';
       updateScales();
-
-      gameActive = true;
       modelsGroup.innerHTML = '';
+      gameActive = true;
 
-      // Создаём все 30 моделей по жёстким координатам
       positions.forEach(item => {
         const wrapper = document.createElement('a-entity');
         wrapper.classList.add('clickable');
@@ -150,7 +149,7 @@
         wrapper.setAttribute('scale', `${item.scale} ${item.scale} ${item.scale}`);
 
         const model = document.createElement('a-entity');
-        model.setAttribute('gltf-model', `#${item.type === 'n' ? 'nerv' : item.type === 'a' ? 'anx' : 'stress'}`);
+        model.setAttribute('gltf-model', `#${item.type}`);
         wrapper.appendChild(model);
 
         const explosion = document.createElement('a-entity');
@@ -159,24 +158,22 @@
         explosion.setAttribute('scale', '0.01 0.01 0.01');
         wrapper.appendChild(explosion);
 
-        // Всегда смотрят на камеру
+        // Всегда смотрит на игрока
         model.addEventListener('model-loaded', () => {
           const tick = () => {
-            if (!wrapper.parentNode) return;
-            wrapper.object3D.lookAt(sceneEl.camera.getWorldPosition(new THREE.Vector3()));
+            if (!wrapper.isConnected) return;
+            wrapper.object3D.lookAt(sceneEl.camera.el.object3D.position);
             wrapper.object3D.rotateY(Math.PI);
             requestAnimationFrame(tick);
           };
           tick();
         });
 
-        // Клик — уничтожение
         wrapper.addEventListener('click', function hit() {
           if (!gameActive) return;
           wrapper.removeEventListener('click', hit);
 
-          const key = item.type === 'n' ? 'nerv' : item.type === 'a' ? 'anx' : 'stress';
-          scores[key]++;
+          scores[item.type]++;
           updateScales();
 
           model.setAttribute('visible', 'false');
@@ -184,48 +181,4 @@
           explosion.setAttribute('animation', `property:scale;to:${item.scale*6} ${item.scale*6} ${item.scale*6};dur:700;easing:easeOutCubic`);
           explosion.setAttribute('animation__fade', 'property:material.opacity;from:1;to:0;dur:900;easing:linear');
 
-          const sound = document.createElement('a-entity');
-          sound.setAttribute('sound', 'src:#hit-sound;autoplay:true;volume:0.9');
-          wrapper.appendChild(sound);
-
-          setTimeout(() => wrapper.remove(), 1000);
-        });
-
-        modelsGroup.appendChild(wrapper);
-      });
-
-      // Таймер 30 секунд
-      let timeLeft = 30;
-      gameTimer = setInterval(() => {
-        timeLeft--;
-        document.getElementById('timer').textContent = timeLeft;
-        if (timeLeft <= 0) endGame();
-      }, 1000);
-    }
-
-    function updateScales() {
-      document.getElementById('nerv-fill').style.width = Math.min(scores.nerv * 10, 100) + '%';
-      document.getElementById('anx-fill').style.width = Math.min(scores.anx * 10, 100) + '%';
-      document.getElementById('stress-fill').style.width = Math.min(scores.stress * 10, 100) + '%';
-    }
-
-    function endGame() {
-      gameActive = false;
-      clearInterval(gameTimer);
-
-      setTimeout(() => {
-        document.getElementById('nerv-result').innerHTML = `Нервозность: <b>${scores.nerv}</b>`;
-        document.getElementById('anx-result').innerHTML = `Тревога: <b>${scores.anx}</b>`;
-        document.getElementById('stress-result').innerHTML = `Стресс: <b>${scores.stress}</b>`;
-
-        ['nerv','anx','stress'].forEach(t => {
-          document.getElementById(`end-${t}-fill`).style.width = Math.min(scores[t] * 10, 100) + '%';
-        });
-
-        document.getElementById('gameUI').style.display = 'none';
-        document.getElementById('endScreen').style.display = 'flex';
-      }, 800);
-    }
-  </script>
-</body>
-</html>
+          const sound = document.create
