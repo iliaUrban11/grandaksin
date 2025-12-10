@@ -142,42 +142,42 @@
 
 const positions = [
   // Нижний ярус — 0.6–1.4 м
-  {type:'nerv',    pos:'  4.0  0.8 -5',   scale:0.65},
-  {type:'anx',     pos:' -4.0  0.9 -5',   scale:0.63},
-  {type:'stress',  pos:'  7.5  0.7 -6',   scale:0.62},
-  {type:'stress',  pos:' -7.5  0.7 -6',   scale:0.62},
+  {type:'nerv',   pos:' 4.0 0.8 -5',   scale:0.65},
+  {type:'anx',    pos:'-4.0 0.9 -5',   scale:0.63},
+  {type:'stress', pos:'7.5 0.7 -6',    scale:0.62},
+  {type:'stress', pos:'-7.5 0.7 -6',   scale:0.62},
 
   // Средний ярус — 1.6–2.6 м
-  {type:'anx',     pos:'  5.5  2.0 -8',   scale:0.64},
-  {type:'nerv',    pos:' -5.5   2.1 -8',   scale:0.65},
-  {type:'stress',  pos:'  2.0  2.4 -7.5', scale:0.58},
-  {type:'nerv',    pos:' -2.0  2.3 -7.5', scale:0.57},
-  {type:'anx',     pos:'  9.5  1.9 -9',   scale:0.60},
-  {type:'anx',     pos:' -9.5  1.9 -9',   scale:0.60},
-  {type:'stress',  pos:'  0.0  2.6 -8',   scale:0.70}, // центр
+  {type:'anx',    pos:'5.5 2.0 -8',    scale:0.64},
+  {type:'nerv',   pos:'-5.5 2.1 -8',   scale:0.65},
+  {type:'stress', pos:'2.0 2.4 -7.5',  scale:0.58},
+  {type:'nerv',   pos:'-2.0 2.3 -7.5',  scale:0.57},
+  {type:'anx',    pos:'9.5 1.9 -9',    scale:0.60},
+  {type:'anx',    pos:'-9.5 1.9 -9',    scale:0.60},
+  {type:'stress', pos:'0.0 2.6 -8',    scale:0.70}, // центр
 
   // Верхний ярус — 3.2–4.5 м
-  {type:'nerv',    pos:'  6.5  3.8 -11',  scale:0.62},
-  {type:'nerv',    pos:' -6.5  3.8 -11',  scale:0.62},
-  {type:'stress',  pos:'  8.5  3.5 -12',  scale:0.55},
-  {type:'stress',  pos:' -8.5  3.5 -12',  scale:0.55},
-  {type:'anx',     pos:'  3.0  4.2 -12',  scale:0.58},
-  {type:'anx',     pos:' -3.0  4.2 -12',  scale:0.58},
-  {type:'nerv',    pos:' 11.0  3.3 -13',  scale:0.52},
-  {type:'nerv',    pos:'-11.0  3.3 -13',  scale:0.52},
+  {type:'nerv',   pos:'6.5 3.8 -11',   scale:0.62},
+  {type:'nerv',   pos:'-6.5 3.8 -11',  scale:0.62},
+  {type:'stress', pos:'8.5 3.5 -12',   scale:0.55},
+  {type:'stress', pos:'-8.5 3.5 -12',  scale:0.55},
+  {type:'anx',    pos:'3.0 4.2 -12',   scale:0.58},
+  {type:'anx',    pos:'-3.0 4.2 -12',  scale:0.58},
+  {type:'nerv',   pos:'11.0 3.3 -13',  scale:0.52},
+  {type:'nerv',   pos:'-11.0 3.3 -13', scale:0.52},
 
   // Супер-верх — 4.8–6.0 м
-  {type:'stress',  pos:'  5.0  5.3 -14',  scale:0.50},
-  {type:'stress',  pos:' -5.0  5.3 -14',  scale:0.50},
-  {type:'anx',     pos:'  8.0  5.0 -15',  scale:0.48},
-  {type:'anx',     pos:' -8.0  5.0 -15',  scale:0.48},
-  {type:'nerv',    pos:'  0.0  6.0 -16',  scale:0.85}, // огромная в центре неба
-  {type:'stress',  pos:' 10.5  4.8 -15',  scale:0.46},
-  {type:'stress',  pos:'-10.5  4.8 -15',  scale:0.46},
-  {type:'anx',     pos:'  2.0  5.6 -14',  scale:0.44},
-  {type:'anx',     pos:' -2.0  5.6 -14',  scale:0.44},
-  {type:'nerv',    pos:' 12.0  5.2 -16',  scale:0.45},
-  {type:'nerv',    pos:'-12.0  5.2 -16',  scale:0.45}
+  {type:'stress', pos:'5.0 5.3 -14',   scale:0.50},
+  {type:'stress', pos:'-5.0 5.3 -14',  scale:0.50},
+  {type:'anx',    pos:'8.0 5.0 -15',   scale:0.48},
+  {type:'anx',    pos:'-8.0 5.0 -15',   scale:0.48},
+  {type:'nerv',   pos:'0.0 6.0 -16',   scale:0.85}, // гигант в центре неба
+  {type:'stress', pos:'10.5 4.8 -15', scale:0.46},
+  {type:'stress', pos:'-10.5 4.8 -15',scale:0.46},
+  {type:'anx',    pos:'2.0 5.6 -14',   scale:0.44},
+  {type:'anx',    pos:'-2.0 5.6 -14',  scale:0.44},
+  {type:'nerv',   pos:'12.0 5.2 -16',  scale:0.45},
+  {type:'nerv',   pos:'-12.0 5.2 -16', scale:0.45}
 ];
     document.getElementById('startGameBtn')?.addEventListener('click', startGame);
     document.getElementById('playAgainBtn')?.addEventListener('click', () => location.reload());
@@ -274,6 +274,7 @@ const positions = [
   </script>
 </body>
 </html>
+
 
 
 
