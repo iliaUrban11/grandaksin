@@ -9,43 +9,95 @@
 
   <style>
     *{margin:0;padding:0;box-sizing:border-box;}
-    body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:linear-gradient(135deg,#027ACA 0%,#00b894 100%);overflow:hidden;height:100vh;color:white;}
+    body{
+      font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;
+      background:linear-gradient(135deg,#027ACA 0%,#00b894 100%);
+      overflow:hidden;height:100vh;color:white;
+    }
 
-    #startPage,#endScreen{position:fixed;inset:0;z-index:2000;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;padding:5vh 5vw;}
+    #startPage, #endScreen{
+      position:fixed;inset:0;z-index:2000;display:flex;flex-direction:column;
+      justify-content:center;align-items:center;text-align:center;
+      padding: 5vh 5vw;
+    }
     #startPage{background:rgba(255,255,255,0.96);color:#027ACA;}
     #endScreen{background:rgba(2,122,202,0.98);color:white;display:none;}
 
     #logo{font-size:clamp(2.5rem,9vw,4.5rem);font-weight:900;margin-bottom:3vh;}
     #rules{font-size:clamp(1.1rem,4.5vw,1.6rem);line-height:1.6;margin:4vh 0;max-width:90%;}
 
-    button{padding:16px 60px;background:#027ACA;color:white;font-size:clamp(1.4rem,5.5vw,1.9rem);font-weight:bold;border:none;border-radius:50px;cursor:pointer;box-shadow:0 10px 30px rgba(2,122,202,0.4);transition:0.3s;}
+    button{
+      padding:16px 60px;background:#027ACA;color:white;font-size:clamp(1.4rem,5.5vw,1.9rem);
+      font-weight:bold;border:none;border-radius:50px;cursor:pointer;
+      box-shadow:0 10px 30px rgba(2,122,202,0.4);transition:0.3s;
+    }
     #playAgainBtn{background:white;color:#027ACA;}
     button:hover{transform:scale(1.08);}
 
-    #gameUI{position:fixed;inset:0;z-index:1000;pointer-events:none;padding:env(safe-area-inset-top,15px) 5vw 5vh 5vw;display:none;}
-
-    #topPanel{
-      position:absolute;top:0;left:0;right:0;background:rgba(255,255,255,0.94);color:#027ACA;
-      padding:14px 20px;text-align:center;border-bottom-left-radius:20px;border-bottom-right-radius:20px;
-      box-shadow:0 6px 20px rgba(0,0,0,0.25);
+    /* ==================== ИГРОВОЙ UI ==================== */
+    #gameUI{
+      position:fixed;inset:0;z-index:1000;pointer-events:none;
+      padding: env(safe-area-inset-top,20px) 5vw env(safe-area-inset-bottom,20px) 5vw;
+      display:none;
     }
-    #instruction{font-size:clamp(1.1rem,4.5vw,1.5rem);font-weight:700;margin-bottom:6px;}
-    #timeLabel{font-size:clamp(0.9rem,3.5vw,1.2rem);font-weight:600;opacity:0.9;}
 
-    #progress{position:absolute;bottom:6vh;left:5vw;right:5vw;display:flex;gap:10px;height:12px;}
-    .mini-bar{flex:1;height:100%;background:rgba(255,255,255,0.25);border-radius:8px;overflow:hidden;box-shadow:inset 0 1px 4px rgba(0,0,0,0.3);}
-    .mini-fill{height:100%;width:0%;transition:width 0.6s ease;}
+    /* Таймер слева */
+    #timer{
+      position:absolute;top:4vh;left:5vw;
+      background:rgba(255,255,255,0.95);color:#027ACA;
+      padding:10px 24px;border-radius:30px;
+      font-size:clamp(2rem,7vw,3rem);font-weight:900;
+      box-shadow:0 6px 20px rgba(0,0,0,0.3);
+    }
+
+    /* Подсказка справа от таймера */
+    #hint{
+      position:absolute;top:4.5vh;right:5vw;
+      background:rgba(255,255,255,0.92);color:#027ACA;
+      padding:10px 18px;border-radius:20px;
+      font-size:clamp(0.9rem,3.5vw,1.2rem);font-weight:600;
+      max-width:50vw;
+      box-shadow:0 4px 15px rgba(0,0,0,0.2);
+    }
+
+    /* Узкие прогресс-бары внизу — не мешают */
+    #progress{
+      position:absolute;bottom:6vh;left:5vw;right:5vw;
+      display:flex;gap:10px;height:12px;
+    }
+    .mini-bar{
+      flex:1;height:100%;background:rgba(255,255,255,0.25);
+      border-radius:8px;overflow:hidden;box-shadow:inset 0 1px 4px rgba(0,0,0,0.3);
+    }
+    .mini-fill{
+      height:100%;width:0%;transition:width 0.6s ease;
+    }
     #nerv-fill   {background:#00859D;}
     #anx-fill    {background:#411D6B;}
     #stress-fill {background:#EB4C24;}
 
+    /* ==================== ФИНАЛЬНЫЙ ЭКРАН ==================== */
     #endTitle{font-size:clamp(2.2rem,8vw,3.8rem);font-weight:900;margin-bottom:4vh;}
     #finalText{font-size:clamp(1.3rem,5vw,2rem);margin:4vh 0;}
-    #endProgress{width:90vw;max-width:500px;display:flex;flex-direction:column;gap:18px;margin:5vh 0;}
-    .end-row{display:flex;align-items:center;gap:16px;}
-    .end-label{width:100px;text-align:left;font-size:clamp(1rem,4vw,1.4rem);font-weight:700;}
-    .end-bar{flex:1;height:60px;background:rgba(255,255,255,0.25);border-radius:30px;overflow:hidden;position:relative;box-shadow:inset 0 3px 12px rgba(0,0,0,0.3);}
-    .end-fill{height:100%;width:0%;display:flex;align-items:center;justify-content:flex-end;padding-right:20px;font-size:1.6rem;font-weight:900;color:white;text-shadow:2px 2px 6px black;}
+
+    #endProgress{
+      width:90vw;max-width:500px;display:flex;flex-direction:column;gap:18px;margin:5vh 0;
+    }
+    .end-row{
+      display:flex;align-items:center;gap:16px;
+    }
+    .end-label{
+      width:100px;text-align:left;font-size:clamp(1rem,4vw,1.4rem);font-weight:700;
+    }
+    .end-bar{
+      flex:1;height:60px;background:rgba(255,255,255,0.25);border-radius:30px;
+      overflow:hidden;position:relative;box-shadow:inset 0 3px 12px rgba(0,0,0,0.3);
+    }
+    .end-fill{
+      height:100%;width:0%;display:flex;align-items:center;justify-content:flex-end;
+      padding-right:20px;font-size:1.6rem;font-weight:900;color:white;
+      text-shadow:2px 2px 6px black;
+    }
     #end-nerv-fill   {background:#00859D;}
     #end-anx-fill    {background:#411D6B;}
     #end-stress-fill {background:#EB4C24;}
@@ -53,18 +105,18 @@
 </head>
 <body>
 
+  <!-- Старт -->
+  -->
   <div id="startPage">
-    <div id="logo">ГРАНДАКСИН<br>ПРОТИВ v1</div>
+    <div id="logo">ГРАНДАКСИН<br>ПРОТИВ</div>
     <div id="rules">Совместите прицел с симптомом<br>и нажмите на экран<br><br>Уничтожьте как можно больше за 30 секунд!</div>
     <button id="startGameBtn">НАЧАТЬ ИГРУ</button>
   </div>
 
+  <!-- Игровой UI -->
   <div id="gameUI">
-    <div id="topPanel">
-      <div id="instruction">Наведите прицел на недуг<br>и нажмите на экран</div>
-      <div id="timeLabel">Оставшееся время: <span id="timer">30</span></div>
-    </div>
-
+    <div id="timer">30</div>
+    <div id="hint">Наведите прицел<br>и нажмите</div>
     <div id="progress">
       <div class="mini-bar"><div id="nerv-fill"   class="mini-fill"></div></div>
       <div class="mini-bar"><div id="anx-fill"    class="mini-fill"></div></div>
@@ -72,6 +124,7 @@
     </div>
   </div>
 
+  <!-- Финальный экран -->
   <div id="endScreen">
     <div id="endTitle">Отличный результат!</div>
     <div id="finalText">Вы уничтожили</div>
@@ -83,6 +136,7 @@
     <button id="playAgainBtn">ИГРАТЬ ЕЩЁ РАЗ</button>
   </div>
 
+  <!-- AR сцена -->
   <a-scene embedded arjs="trackingMethod:best;sourceType:webcam;debugUIEnabled:false"
            renderer="antialias:true" vr-mode-ui="enabled:false" device-orientation-permission-ui="enabled:false"
            style="display:none" raycaster="objects:.clickable" cursor="rayOrigin:mouse">
@@ -113,13 +167,13 @@
     const positions = [
       {type:'nerv',   pos:' 5.0  1.2 -6',   scale:0.55}, {type:'nerv',   pos:'-7.5  3.8 -8',   scale:0.30},
       {type:'nerv',   pos:' 3.2  4.2 -12',  scale:0.40}, {type:'nerv',   pos:'-10  2.0 -10',  scale:0.60},
-      {type:'nerv',   pos:' 9.0  0.8 -7',   scale:0.50}, {type:'nerv',   pos:'-4.0  3.5 -14',  scale:0.35},
+      {type:'nerv',   pos:' 9.0  0.8 -7',   scale:0.50}, {type:'nerv',   pos:'-4.0  3.Concurrent 3.5 -14',  scale:0.35},
       {type:'nerv',   pos:' 6.5  2.7 -11',  scale:0.45}, {type:'nerv',   pos:'-8.5  1.1 -13', scale:0.38},
       {type:'nerv',   pos:' 2.0  1.8 -9',   scale:0.62}, {type:'nerv',   pos:'-6.0  4.0 -6',   scale:0.28},
 
       {type:'anx',    pos:' 8.0  3.0 -9',   scale:0.58}, {type:'anx',    pos:'-9.0  1.5 -11',  scale:0.42},
       {type:'anx',    pos:' 4.5  2.5 -13',  scale:0.33}, {type:'anx',    pos:'-5.5  0.9 -8',   scale:0.65},
-      {type:'anx',    pos:' 10  4.0 -10',   scale:0.48}, {type:'anx',    pos:'-3.0  2.2 -7',   scale:0.55},
+      {type:'anx',    pos:' 10 10  4.0 -10',   scale:0.48}, {type:'anx',    pos:'-3.0  2.2 -7',   scale:0.55},
       {type:'anx',    pos:' 7.0  1.6 -14',  scale:0.37}, {type:'anx',    pos:'-11  3.3 -12',  scale:0.50},
       {type:'anx',    pos:' 1.5  3.9 -10',  scale:0.30}, {type:'anx',    pos:'-7.0  2.8 -15',  scale:0.45},
 
@@ -143,6 +197,7 @@
       modelsGroup.innerHTML = '';
       gameActive = true;
 
+      // Создание моделей (как раньше)
       positions.forEach(item => {
         const wrapper = document.createElement('a-entity');
         wrapper.classList.add('clickable');
@@ -155,3 +210,73 @@
 
         const explosion = document.createElement('a-entity');
         explosion.setAttribute('gltf-model', '#destruction');
+        explosion.setAttribute('visible', 'false');
+        explosion.setAttribute('scale', '0.01 0.01 0.01');
+        wrapper.appendChild(explosion);
+
+        model.addEventListener('model-loaded', () => {
+          const tick = () => {
+            if (!wrapper.isConnected) return;
+            wrapper.object3D.lookAt(sceneEl.camera.el.object3D.position);
+            wrapper.object3D.rotateY(Math.PI);
+            requestAnimationFrame(tick);
+          };
+          tick();
+        });
+
+        wrapper.addEventListener('click', function hit() {
+          if (!gameActive) return;
+          wrapper.removeEventListener('click', hit);
+          scores[item.type]++;
+          updateMiniProgress();
+
+          model.setAttribute('visible', 'false');
+          explosion.setAttribute('visible', 'true');
+          explosion.setAttribute('animation', `property:scale;to:${item.scale*7} ${item.scale*7} ${item.scale*7};dur:600;easing:easeOutCubic`);
+
+          const sound = document.createElement('a-entity');
+          sound.setAttribute('sound', 'src:#hit-sound;autoplay:true;volume:1');
+          wrapper.appendChild(sound);
+
+          setTimeout(() => wrapper.remove(), 1000);
+        });
+
+        modelsGroup.appendChild(wrapper);
+      });
+
+      let timeLeft = 30;
+      document.getElementById('timer').textContent = '30';
+      gameTimer = setInterval(() => {
+        timeLeft--;
+        document.getElementById('timer').textContent = timeLeft;
+        if (timeLeft <= 0) endGame();
+      }, 1000);
+    }
+
+    function updateMiniProgress() {
+      document.getElementById('nerv-fill').style.width   = Math.min(scores.nerv   * 10, 100) + '%';
+      document.getElementById('anx-fill').style.width    = Math.min(scores.anx    * 10, 100) + '%';
+      document.getElementById('stress-fill').style.width = Math.min(scores.stress * 10, 100) + '%';
+    }
+
+    function endGame() {
+      gameActive = false;
+      clearInterval(gameTimer);
+
+      setTimeout(() => {
+        document.getElementById('gameUI').style.display = 'none';
+        document.getElementById('endScreen').style.display = 'flex';
+
+        // Показываем результат с цифрами
+        document.getElementById('end-nerv-fill').style.width = Math.min(scores.nerv * 10, 100) + '%';
+        document.getElementById('end-anx-fill').style.width = Math.min(scores.anx * 10, 100) + '%';
+        document.getElementById('end-stress-fill').style.width = Math.min(scores.stress * 10, 100) + '%';
+
+        document.getElementById('end-nerv-fill').textContent   = scores.nerv;
+        document.getElementById('end-anx-fill').textContent    = scores.anx;
+        document.getElementById('end-stress-fill').textContent = scores.stress;
+      }, 800);
+    }
+  </script>
+</body>
+</html>
