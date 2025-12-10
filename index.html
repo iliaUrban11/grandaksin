@@ -12,224 +12,135 @@
     body{
       font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;
       background:linear-gradient(135deg,#027ACA 0%,#00b894 100%);
-      overflow:hidden;
-      height:100vh;
-      color:white;
+      overflow:hidden;height:100vh;color:white;
     }
 
-    /* Адаптивные отступы */
-    .container {
-      padding: env(safe-area-inset-top, 20px) env(safe-area-inset-right, 20px) env(safe-area-inset-bottom, 20px) env(safe-area-inset-left, 20px);
+    #startPage, #endScreen{
+      position:fixed;inset:0;z-index:2000;display:flex;flex-direction:column;
+      justify-content:center;align-items:center;text-align:center;
       padding: 5vh 5vw;
-      max-width: 500px;
-      margin: 0 auto;
-      height: 100vh;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
+    }
+    #startPage{background:rgba(255,255,255,0.96);color:#027ACA;}
+    #endScreen{background:rgba(2,122,202,0.98);color:white;display:none;}
+
+    #logo{font-size:clamp(2.5rem,9vw,4.5rem);font-weight:900;margin-bottom:3vh;}
+    #rules{font-size:clamp(1.1rem,4.5vw,1.6rem);line-height:1.6;margin:4vh 0;max-width:90%;}
+
+    button{
+      padding:16px 60px;background:#027ACA;color:white;font-size:clamp(1.4rem,5.5vw,1.9rem);
+      font-weight:bold;border:none;border-radius:50px;cursor:pointer;
+      box-shadow:0 10px 30px rgba(2,122,202,0.4);transition:0.3s;
+    }
+    #playAgainBtn{background:white;color:#027ACA;}
+    button:hover{transform:scale(1.08);}
+
+    /* ==================== ИГРОВОЙ UI ==================== */
+    #gameUI{
+      position:fixed;inset:0;z-index:1000;pointer-events:none;
+      padding: env(safe-area-inset-top,20px) 5vw env(safe-area-inset-bottom,20px) 5vw;
+      display:none;
     }
 
-    #startPage, #endScreen {
-      position: fixed;
-      inset: 0;
-      z-index: 2000;
-      background: rgba(255,255,255,0.96);
-      color: #027ACA;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      text-align: center;
-    }
-    #endScreen { display: none; background: rgba(2,122,202,0.98); color: white; }
-
-    #logo {
-      font-size: clamp(2.2rem, 8vw, 4rem);
-      font-weight: 900;
-      margin-bottom: 2vh;
-      line-height: 1.1;
+    /* Таймер слева */
+    #timer{
+      position:absolute;top:4vh;left:5vw;
+      background:rgba(255,255,255,0.95);color:#027ACA;
+      padding:10px 24px;border-radius:30px;
+      font-size:clamp(2rem,7vw,3rem);font-weight:900;
+      box-shadow:0 6px 20px rgba(0,0,0,0.3);
     }
 
-    #rules {
-      font-size: clamp(1.1rem, 4.5vw, 1.6rem);
-      line-height: 1.6;
-      margin: 4vh 0;
-      max-width: 90%;
+    /* Подсказка справа от таймера */
+    #hint{
+      position:absolute;top:4.5vh;right:5vw;
+      background:rgba(255,255,255,0.92);color:#027ACA;
+      padding:10px 18px;border-radius:20px;
+      font-size:clamp(0.9rem,3.5vw,1.2rem);font-weight:600;
+      max-width:50vw;
+      box-shadow:0 4px 15px rgba(0,0,0,0.2);
     }
 
-    button {
-      padding: 16px 50px;
-      background: #027ACA;
-      color: white;
-      font-size: clamp(1.3rem, 5vw, 1.8rem);
-      font-weight: bold;
-      border: none;
-      border-radius: 50px;
-      cursor: pointer;
-      box-shadow: 0 10px 30px rgba(2,122,202,0.4);
-      transition: transform 0.3s;
-      min-width: 220px;
+    /* Узкие прогресс-бары внизу — не мешают */
+    #progress{
+      position:absolute;bottom:6vh;left:5vw;right:5vw;
+      display:flex;gap:10px;height:12px;
     }
-    button:hover { transform: scale(1.08); }
-    #playAgainBtn { background: white; color: #027ACA; }
-
+    .mini-bar{
+      flex:1;height:100%;background:rgba(255,255,255,0.25);
+      border-radius:8px;overflow:hidden;box-shadow:inset 0 1px 4px rgba(0,0,0,0.3);
     }
-
-    /* Игровой UI — адаптивный */
-    #gameUI {
-      position: fixed;
-      inset: 0;
-      pointer-events: none;
-      z-index: 1000;
-      padding: env(safe-area-inset-top, 20px) env(safe-area-inset-right, 16px) env(safe-area-inset-bottom, 20px) env(safe-area-inset-left, 16px);
-      padding: 4vh 4vw;
-      display: none;
+    .mini-fill{
+      height:100%;width:0%;transition:width 0.6s ease;
     }
+    #nerv-fill   {background:#00859D;}
+    #anx-fill    {background:#411D6B;}
+    #stress-fill {background:#EB4C24;}
 
-    #timer {
-      position: absolute;
-      top: 3vh;
-      left: 50%;
-      transform: translateX(-50%);
-      background: rgba(255,255,255,0.95);
-      color: #027ACA;
-      padding: 10px 28px;
-      border-radius: 30px;
-      font-size: clamp(2rem, 7vw, 3.5rem);
-      font-weight: 900;
-      box-shadow: 0 8px 25px rgba(0,0,0,0.3);
+    /* ==================== ФИНАЛЬНЫЙ ЭКРАН ==================== */
+    #endTitle{font-size:clamp(2.2rem,8vw,3.8rem);font-weight:900;margin-bottom:4vh;}
+    #finalText{font-size:clamp(1.3rem,5vw,2rem);margin:4vh 0;}
+
+    #endProgress{
+      width:90vw;max-width:500px;display:flex;flex-direction:column;gap:18px;margin:5vh 0;
     }
-
-    #progress {
-      position: absolute;
-      top: 14vh;
-      left: 5vw;
-      right: 5vw;
-      width: 90vw;
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
+    .end-row{
+      display:flex;align-items:center;gap:16px;
     }
-
-    .progress-row {
-      display: flex;
-      align-items: center;
-      gap: 12px;
+    .end-label{
+      width:100px;text-align:left;font-size:clamp(1rem,4vw,1.4rem);font-weight:700;
     }
-
-    .bar {
-      flex: 1;
-      height: 50px;
-      background: rgba(255,255,255,0.2);
-      border-radius: 25px;
-      overflow: hidden;
-      position: relative;
-      box-shadow: inset 0 2px 10px rgba(0,0,0,0.2);
+    .end-bar{
+      flex:1;height:60px;background:rgba(255,255,255,0.25);border-radius:30px;
+      overflow:hidden;position:relative;box-shadow:inset 0 3px 12px rgba(0,0,0,0.3);
     }
-
-    .fill {
-      height: 100%;
-      width: 0%;
-      transition: width 0.8s ease;
-      border-radius: 25px;
-      display: flex;
-      align-items: center;
-      justify-content: flex-end;
-      padding-right: 16px;
-      font-weight: bold;
-      font-size: 1.1rem;
-      color: white;
-      text-shadow: 1px 1px 3px black;
+    .end-fill{
+      height:100%;width:0%;display:flex;align-items:center;justify-content:flex-end;
+      padding-right:20px;font-size:1.6rem;font-weight:900;color:white;
+      text-shadow:2px 2px 6px black;
     }
-
-    .label {
-      width: 100px;
-      text-align: left;
-      font-size: clamp(0.9rem, 3.5vw, 1.2rem);
-      font-weight: 700;
-    }
-
-    #nerv-fill   { background: #00859D; }
-    #anx-fill    { background: #411D6B; }
-    #stress-fill { background: #EB4C24; }
-
-    #uiText {
-      position: absolute;
-      bottom: 5vh;
-      left: 5vw;
-      right: 5vw;
-      background: rgba(255,255,255,0.94);
-      color: #027ACA;
-      padding: 16px 20px;
-      border-radius: 20px;
-      font-size: clamp(1rem, 4vw, 1.4rem);
-      font-weight: 600;
-      text-align: center;
-      box-shadow: 0 -5px 20px rgba(0,0,0,0.15);
-    }
-
-    /* Финальный экран */
-    #endTitle {
-      font-size: clamp(2rem, 7vw, 3.5rem);
-      font-weight: 900;
-      margin-bottom: 4vh;
-    }
-
-    #finalResultText {
-      font-size: clamp(1.3rem, 5vw, 2rem);
-      margin: 4vh 0;
-      text-align: center;
-      line-height: 1.5;
-    }
-
-    #endProgress {
-      width: 90vw;
-      max-width: 460px;
-      display: flex;
-      flex-direction: column;
-      gap: 16px;
-      margin: 4vh 0;
-    }
+    #end-nerv-fill   {background:#00859D;}
+    #end-anx-fill    {background:#411D6B;}
+    #end-stress-fill {background:#EB4C24;}
   </style>
 </head>
 <body>
 
   <!-- Старт -->
-  <div id="startPage" class="container">
+  -->
+  <div id="startPage">
     <div id="logo">ГРАНДАКСИН<br>ПРОТИВ</div>
     <div id="rules">Совместите прицел с симптомом<br>и нажмите на экран<br><br>Уничтожьте как можно больше за 30 секунд!</div>
     <button id="startGameBtn">НАЧАТЬ ИГРУ</button>
   </div>
 
-  <!-- Игровой интерфейс -->
+  <!-- Игровой UI -->
   <div id="gameUI">
     <div id="timer">30</div>
+    <div id="hint">Наведите прицел<br>и нажмите</div>
     <div id="progress">
-      <div class="progress-row"><div class="label">Нервозность</div><div class="bar"><div id="nerv-fill" class="fill">0</div></div></div>
-      <div class="progress-row"><div class="label">Тревога</div><div class="bar"><div id="anx-fill" class="fill">0</div></div></div>
-      <div class="progress-row"><div class="label">Стресс</div><div class="bar"><div id="stress-fill" class="fill">0</div></div></div>
+      <div class="mini-bar"><div id="nerv-fill"   class="mini-fill"></div></div>
+      <div class="mini-bar"><div id="anx-fill"    class="mini-fill"></div></div>
+      <div class="mini-bar"><div id="stress-fill" class="mini-fill"></div></div>
     </div>
-    <div id="uiText">Наведите прицел и нажмите на симптом</div>
   </div>
 
-  <!-- Финал -->
-  <div id="endScreen" class="container">
+  <!-- Финальный экран -->
+  <div id="endScreen">
     <div id="endTitle">Отличный результат!</div>
-    <div id="finalResultText">Вы уничтожили</div>
+    <div id="finalText">Вы уничтожили</div>
     <div id="endProgress">
-      <div class="progress-row"><div class="label">Нервозность</div><div class="bar"><div id="end-nerv-fill" class="fill">0</div></div></div>
-      <div class="progress-row"><div class="label">Тревога</div><div class="bar"><div id="end-anx-fill" class="fill">0</div></div></div>
-      <div class="progress-row"><div class="label">Стресс</div><div class="bar"><div id="end-stress-fill" class="fill">0</div></div></div>
+      <div class="end-row"><div class="end-label">Нервозность</div><div class="end-bar"><div id="end-nerv-fill"   class="end-fill">0</div></div></div>
+      <div class="end-row"><div class="end-label">Тревога</div>     <div class="end-bar"><div id="end-anx-fill"    class="end-fill">0</div></div></div>
+      <div class="end-row"><div class="end-label">Стресс</div>     <div class="end-bar"><div id="end-stress-fill" class="end-fill">0</div></div></div>
     </div>
     <button id="playAgainBtn">ИГРАТЬ ЕЩЁ РАЗ</button>
   </div>
 
   <!-- AR сцена -->
-  <a-scene embedded arjs="trackingMethod:best;sourceType:webcam;debugUIEnabled:false" 
+  <a-scene embedded arjs="trackingMethod:best;sourceType:webcam;debugUIEnabled:false"
            renderer="antialias:true" vr-mode-ui="enabled:false" device-orientation-permission-ui="enabled:false"
            style="display:none" raycaster="objects:.clickable" cursor="rayOrigin:mouse">
-    
+
     <a-assets timeout="120000">
       <a-asset-item id="nerv"    src="red.glb"></a-asset-item>
       <a-asset-item id="anx"     src="green.glb"></a-asset-item>
@@ -247,7 +158,7 @@
   </a-scene>
 
   <script type="module">
-    const scores = {nerv: 0, anx: 0, stress: 0};
+    const scores = {nerv:0, anx:0, stress:0};
     const sceneEl = document.querySelector('a-scene');
     const modelsGroup = document.getElementById('models');
     let gameActive = false;
@@ -256,13 +167,13 @@
     const positions = [
       {type:'nerv',   pos:' 5.0  1.2 -6',   scale:0.55}, {type:'nerv',   pos:'-7.5  3.8 -8',   scale:0.30},
       {type:'nerv',   pos:' 3.2  4.2 -12',  scale:0.40}, {type:'nerv',   pos:'-10  2.0 -10',  scale:0.60},
-      {type:'nerv',   pos:' 9.0  0.8 -7',   scale:0.50}, {type:'nerv',   pos:'-4.0  3.5 -14',  scale:0.35},
+      {type:'nerv',   pos:' 9.0  0.8 -7',   scale:0.50}, {type:'nerv',   pos:'-4.0  3.Concurrent 3.5 -14',  scale:0.35},
       {type:'nerv',   pos:' 6.5  2.7 -11',  scale:0.45}, {type:'nerv',   pos:'-8.5  1.1 -13', scale:0.38},
       {type:'nerv',   pos:' 2.0  1.8 -9',   scale:0.62}, {type:'nerv',   pos:'-6.0  4.0 -6',   scale:0.28},
 
       {type:'anx',    pos:' 8.0  3.0 -9',   scale:0.58}, {type:'anx',    pos:'-9.0  1.5 -11',  scale:0.42},
       {type:'anx',    pos:' 4.5  2.5 -13',  scale:0.33}, {type:'anx',    pos:'-5.5  0.9 -8',   scale:0.65},
-      {type:'anx',    pos:' 10  4.0 -10',   scale:0.48}, {type:'anx',    pos:'-3.0  2.2 -7',   scale:0.55},
+      {type:'anx',    pos:' 10 10  4.0 -10',   scale:0.48}, {type:'anx',    pos:'-3.0  2.2 -7',   scale:0.55},
       {type:'anx',    pos:' 7.0  1.6 -14',  scale:0.37}, {type:'anx',    pos:'-11  3.3 -12',  scale:0.50},
       {type:'anx',    pos:' 1.5  3.9 -10',  scale:0.30}, {type:'anx',    pos:'-7.0  2.8 -15',  scale:0.45},
 
@@ -282,10 +193,11 @@
       sceneEl.style.display = 'block';
 
       scores.nerv = scores.anx = scores.stress = 0;
-      updateProgress();
+      updateMiniProgress();
       modelsGroup.innerHTML = '';
       gameActive = true;
 
+      // Создание моделей (как раньше)
       positions.forEach(item => {
         const wrapper = document.createElement('a-entity');
         wrapper.classList.add('clickable');
@@ -316,7 +228,7 @@
           if (!gameActive) return;
           wrapper.removeEventListener('click', hit);
           scores[item.type]++;
-          updateProgress();
+          updateMiniProgress();
 
           model.setAttribute('visible', 'false');
           explosion.setAttribute('visible', 'true');
@@ -341,15 +253,10 @@
       }, 1000);
     }
 
-    function updateProgress() {
-      const updateFill = (id, value) => {
-        const fill = document.getElementById(id);
-        fill.style.width = Math.min(value * 10, 100) + '%';
-        fill.textContent = value;
-      };
-      updateFill('nerv-fill', scores.nerv);
-      updateFill('anx-fill', scores.anx);
-      updateFill('stress-fill', scores.stress);
+    function updateMiniProgress() {
+      document.getElementById('nerv-fill').style.width   = Math.min(scores.nerv   * 10, 100) + '%';
+      document.getElementById('anx-fill').style.width    = Math.min(scores.anx    * 10, 100) + '%';
+      document.getElementById('stress-fill').style.width = Math.min(scores.stress * 10, 100) + '%';
     }
 
     function endGame() {
@@ -360,14 +267,14 @@
         document.getElementById('gameUI').style.display = 'none';
         document.getElementById('endScreen').style.display = 'flex';
 
-        const updateEndFill = (id, value) => {
-          const fill = document.getElementById(id);
-          fill.style.width = Math.min(value * 10, 100) + '%';
-          fill.textContent = value;
-        };
-        updateEndFill('end-nerv-fill', scores.nerv);
-        updateEndFill('end-anx-fill', scores.anx);
-        updateEndFill('end-stress-fill', scores.stress);
+        // Показываем результат с цифрами
+        document.getElementById('end-nerv-fill').style.width = Math.min(scores.nerv * 10, 100) + '%';
+        document.getElementById('end-anx-fill').style.width = Math.min(scores.anx * 10, 100) + '%';
+        document.getElementById('end-stress-fill').style.width = Math.min(scores.stress * 10, 100) + '%';
+
+        document.getElementById('end-nerv-fill').textContent   = scores.nerv;
+        document.getElementById('end-anx-fill').textContent    = scores.anx;
+        document.getElementById('end-stress-fill').textContent = scores.stress;
       }, 800);
     }
   </script>
