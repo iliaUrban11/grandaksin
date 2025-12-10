@@ -41,8 +41,8 @@ function endGame() {
   modelsGroup.innerHTML = '';
 
   setTimeout(() => {
-    document.getElementById('nerv-result').innerHTML   = `Нервозность: <b>${scores.nerv}</b>`;
-    document.getElementById('anx-result').innerHTML    = `Тревога: <b>${scores.anx}</b>`;
+    document.getElementById('nerv-result').innerHTML = `Нервозность: <b>${scores.nerv}</b>`;
+    document.getElementById('anx-result').innerHTML = `Тревога: <b>${scores.anx}</b>`;
     document.getElementById('stress-result').innerHTML = `Стресс: <b>${scores.stress}</b>`;
 
     setTimeout(() => {
@@ -79,7 +79,7 @@ function spawnModel(type) {
   el.setAttribute('scale', `${scale} ${scale} ${scale}`);
 
   const distance = 3 + Math.random() * 7;
-  const yaw   = (Math.random() * 100 - 50) * Math.PI / 180;
+  const yaw = (Math.random() * 100 - 50) * Math.PI / 180;
   const pitch = (Math.random() * 60 - 30) * Math.PI / 180;
 
   const x = Math.sin(yaw) * Math.cos(pitch) * distance;
@@ -88,16 +88,8 @@ function spawnModel(type) {
 
   el.setAttribute('position', `${x} ${y} ${z}`);
 
-  // САМЫЙ ПРОСТОЙ И НАДЁЖНЫЙ BILLBOARD
-  el.addEventListener('model-loaded', () => {
-    const tick = () => {
-      if (!el.parentNode) return;
-      el.object3D.lookAt(sceneEl.camera.position);
-      el.object3D.rotateY(Math.PI); // если модель изначально смотрит назад
-      requestAnimationFrame(tick);
-    };
-    tick();
-  });
+  // УБРАН ВЕСЬ ПОВОРОТ К ИГРОКУ — НИКАКОГО ДЁРГАНИЯ!
+  // Больше никакого lookAt, tick, rotateY — модели стоят как вкопанные
 
   el.addEventListener('click', () => {
     if (!gameActive) return;
