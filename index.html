@@ -4,110 +4,98 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>Грандаксин против</title>
-  <script type="module" src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js"></script>
+  <script type="module" src="https://unpkg.com/@google/model-viewer@^3.5.0/dist/model-viewer.min.js"></script>
   <style>
-    * { margin:0; padding:0; box-sizing:border-box; }
-    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background:#000; overflow:hidden; height:100vh; color:white; }
-    #ui { position:fixed; top:0; left:0; width:100%; height:100%; pointer-events:none; z-index:10; }
-    #timer { position:absolute; top:20px; left:50%; transform:translateX(-50%); background:rgba(2,122,202,0.9); padding:12px 30px; border-radius:30px; font-size:2.5em; font-weight:900; }
-    #progress { position:absolute; top:90px; left:20px; right:20px; display:flex; gap:15px; }
-    .bar { flex:1; height:45px; background:rgba(255,255,255,0.2); border-radius:25px; overflow:hidden; position:relative; }
-    .fill { height:100%; width:0%; background:linear-gradient(90deg, #00859D, #00b894); transition:width 0.6s ease; }
-    .label { position:absolute; top:50%; left:15px; transform:translateY(-50%); font-size:14px; font-weight:700; color:white; text-shadow:0 0 10px black; }
-    #hint { position:absolute; bottom:30px; left:0; right:0; text-align:center; font-size:1.4em; background:rgba(0,0,0,0.6); padding:15px; border-radius:15px; margin:0 20px; }
-
-    model-viewer { width:100vw; height:100vh; background:#000; }
-    #startBtn { position:fixed; top:50%; left:50%; transform:translate(-50%,-50%); z-index:100; padding:20px 70px; font-size:2em; background:#027ACA; color:white; border:none; border-radius:50px; box-shadow:0 15px 40px rgba(0,0,0,0.5); cursor:pointer; }
+    body{margin:0;background:#000;overflow:hidden;height:100vh;font-family:sans-serif}
+    #ui{position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:10;color:#fff}
+    #timer{position:fixed;top:20px;left:50%;transform:translateX(-50%);background:rgba(2,122,202,0.95);padding:14px 36px;border-radius:40px;font-size:3em;font-weight:900}
+    #progress{position:fixed;top:100px;left:20px;right:20px;display:flex;gap:12px}
+    .bar{flex:1;height:44px;background:rgba(255,255,255,0.2);border-radius:25px;overflow:hidden;position:relative}
+    .fill{height:100%;width:0%;transition:width .8s ease}
+    .label{position:absolute;top:50%;left:16px;transform:translateY(-50%);font-size:15px;font-weight:700;text-shadow:0 0 10px #000}
+    #nerv-fill{background:#00859D}#anx-fill{background:#411D6B}#stress-fill{background:#EB4C24}
+    #hint{position:fixed;bottom:30px;left:0;right:0;text-align:center;background:rgba(0,0,0,0.7);padding:16px;border-radius:15px;margin:0 20px;font-size:1.4em}
+    #start{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);z-index:100;padding:24px 90px;font-size:2.4em;background:#027ACA;color:#fff;border:none;border-radius:60px;box-shadow:0 20px 50px rgba(0,0,0,0.6);cursor:pointer}
+    model-viewer{position:fixed;width:100vw;height:100vh;display:none}
   </style>
 </head>
 <body>
 
-  <button id="startBtn">НАЧАТЬ ИГРУ В AR1</button>
+<button id="start">НАЧАТЬ В AR</button>
 
-  <div id="ui" style="display:none">
-    <div id="timer">30</div>
-    <div id="progress">
-      <div class="bar"><div class="label">Нервозность</div><div id="nerv-fill" class="fill"></div></div>
-      <div class="bar"><div class="label">Тревога</div><div id="anx-fill" class="fill"></div></div>
-      <div class="bar"><div class="label">Стресс</div><div id="stress-fill" class="fill"></div></div>
-    </div>
-    <div id="hint">Нажмите на симптом, чтобы уничтожить!</div>
+<div id="ui" style="display:none">
+  <div id="timer">30</div>
+  <div id="progress">
+    <div class="bar"><div class="label">Нервозность</div><div id="nerv-fill" class="fill"></div></div>
+    <div class="bar"><div class="label">Тревога</div><div id="anx-fill" class="fill"></div></div>
+    <div class="bar"><div class="label">Стресс</div><div id="stress-fill" class="fill"></div></div>
   </div>
+  <div id="hint">Нажмите на симптом → он исчезнет!</div>
+</div>
 
-  <model-viewer
-    id="ar"
-    src="scene.glb"
-    ios-src="scene.usdz"
-    ar
-    ar-modes="scene-viewer quick-look webxr"
-    ar-scale="auto"
-    camera-controls
-    touch-action="pan-y"
-    disable-zoom
-    shadow-intensity="1"
-    exposure="1.0"
-    environment-image="neutral"
-    skybox-image="neutral"
-    style="display:none">
+<div id="container"></div>
 
-    <button slot="ar-button" style="display:none"></button>
-  </model-viewer>
+<script type="module">
+  const container = document.getElementById('container');
+  const models = [
+    {type:'nerv', src:'https://v3x.me/grandaksin/nerv.glb'},
+    {type:'anx',  src:'https://v3x.me/grandaksin/anx.glb'},
+    {type:'stress',src:'https://v3x.me/grandaksin/stress.glb'}
+  ];
+  let scores = {nerv:0,anx:0,stress:0};
+  let timeLeft = 30;
+  let timer;
 
-  <script>
-    const viewer = document.getElementById('ar');
-    const startBtn = document.getElementById('startBtn');
-    const ui = document.getElementById('ui');
-    let scores = { nerv:0, anx:0, stress:0 };
-    let timeLeft = 30;
-    let timer;
+  document.getElementById('start').onclick = () => {
+    document.getElementById('start').remove();
+    document.getElementById('ui').style.display = 'block';
+    spawn(20);
+    timer = setInterval(()=> {
+      timeLeft--;
+      document.getElementById('timer').textContent = timeLeft;
+      if(timeLeft<=0) endGame();
+    },1000);
+  };
 
-    startBtn.onclick = () => {
-      startBtn.style.display = 'none';
-      ui.style.display = 'block';
-      viewer.style.display = 'block';
-      viewer.activateAR();
+  function spawn(count) {
+    for(let i=0;i<count;i++) setTimeout(create, i*400);
+  }
 
-      timer = setInterval(() => {
-        timeLeft--;
-        document.getElementById('timer').textContent = timeLeft;
-        if (timeLeft <= 0) endGame();
-      }, 1000);
-    };
+  function create() {
+    if(timeLeft<=0) return;
+    const m = models[Math.floor(Math.random()*models.length)];
+    const mv = document.createElement('model-viewer');
+    mv.src = m.src;
+    mv.ar = true;
+    mv.arModes = "webxr";           // ← вот ключ! Только WebXR → никакого окна
+    mv.arScale = "auto";
+    mv.cameraControls = true;
+    mv.touchAction = "pan-y";
+    mv.shadowIntensity = 1;
+    mv.style.cssText = `position:absolute;width:140px;height:140px;left:${15+Math.random()*70}vw;top:${15+Math.random()*70}vh;display:none`;
 
-    function endGame() {
-      clearInterval(timer);
-      alert(`Игра окончена!\n\nНервозность: ${scores.nerv}\nТревога: ${scores.anx}\nСтресс: ${scores.stress}\n\nСпасибо за игру!`);
-      location.reload();
-    }
-
-    // Клик по моделям (работает в AR!)
-    viewer.addEventListener('load', () => {
-      const scene = viewer.model;
-      scene.addEventListener('click', (ev) => {
-        if (timeLeft <= 0) return;
-        const target = ev.target;
-        if (!target) return;
-
-        const name = target.material?.name || '';
-        if (name.includes('nerv')) { scores.nerv++; updateBar('nerv-fill'); playHit(); }
-        if (name.includes('anx'))  { scores.anx++;  updateBar('anx-fill');  playHit(); }
-        if (name.includes('stress')){ scores.stress++; updateBar('stress-fill'); playHit(); }
-
-        target.parent.removeChild(target);
-      });
+    mv.addEventListener('ar-status', e => {
+      if(e.detail.status==='session-started') mv.style.display='block';
     });
 
-    function updateBar(id) {
-      const el = document.getElementById(id);
-      const percent = Math.min((scores[id.split('-')[0]] || scores[id.split('-')[0]]) * 10, 100);
-      el.style.width = percent + '%';
-    }
+    mv.addEventListener('click', () => {
+      if(timeLeft<=0) return;
+      scores[m.type]++;
+      document.getElementById(m.type+'-fill').style.width = Math.min(scores[m.type]*10,100)+'%';
+      mv.remove();
+      new Audio('https://assets.codepen.io/605876/sfx-hit.mp3').play();
+      setTimeout(create, 500);
+    });
 
-    function playHit() {
-      const audio = new Audio('https://assets.codepen.io/605876/sfx-hit.mp3');
-      audio.volume = 0.5;
-      audio.play().catch(() => {});
-    }
-  </script>
+    container.appendChild(mv);
+  }
+
+  function endGame() {
+    clearInterval(timer);
+    container.innerHTML = '';
+    alert(`Время вышло!\n\nУничтожено симптомов:\nНервозность: ${scores.nerv}\nТревога: ${scores.anx}\nСтресс: ${scores.stress}\n\nГрандаксин — ваш союзник!`);
+    location.reload();
+  }
+</script>
 </body>
 </html>
