@@ -140,25 +140,32 @@
     let gameActive = false;
     let gameTimer;
 
-    const positions = [
-      {type:'nerv',   pos:' 5.0 1.2 -6',   scale:0.55}, {type:'nerv',   pos:'-7.5 3.8 -8',   scale:0.30},
-      {type:'nerv',   pos:' 3.2 4.2 -12',  scale:0.40}, {type:'nerv',   pos:'-10 2.0 -10',  scale:0.60},
-      {type:'nerv',   pos:' 9.0 0.8 -7',   scale:0.50}, {type:'nerv',   pos:'-4.0 3.5 -14',  scale:0.35},
-      {type:'nerv',   pos:' 6.5 2.7 -11',  scale:0.45}, {type:'nerv',   pos:'-8.5 1.1 -13', scale:0.38},
-      {type:'nerv',   pos:' 2.0 1.8 -9',   scale:0.62}, {type:'nerv',   pos:'-6.0 4.0 -6',   scale:0.28},
+  const positions = [
+  // Ряд 1 (ближний)
+  {type:'nerv',   pos:' 4.0 1.5 -6',  scale:0.62}, {type:'anx',    pos:'-4.0 1.5 -6',  scale:0.60},
+  {type:'stress', pos:' 8.0 1.3 -7',  scale:0.58}, {type:'stress', pos:'-8.0 1.3 -7',  scale:0.58},
 
-      {type:'anx',    pos:' 8.0 3.0 -9',   scale:0.58}, {type:'anx',    pos:'-9.0 1.5 -11',  scale:0.42},
-      {type:'anx',    pos:' 4.5 2.5 -13',  scale:0.33}, {type:'anx',    pos:'-5.5 0.9 -8',   scale:0.65},
-      {type:'anx',    pos:' 10 4.0 -10',   scale:0.48}, {type:'anx',    pos:'-3.0 2.2 -7',   scale:0.55},
-      {type:'anx',    pos:' 7.0 1.6 -14',  scale:0.37}, {type:'anx',    pos:'-11 3.3 -12',  scale:0.50},
-      {type:'anx',    pos:' 1.5 3.9 -10',  scale:0.30}, {type:'anx',    pos:'-7.0 2.8 -15',  scale:0.45},
+  // Ряд 2
+  {type:'anx',    pos:' 6.0 2.3 -8',  scale:0.55}, {type:'nerv',   pos:'-6.0 2.3 -8',  scale:0.57},
+  {type:'stress', pos:' 2.0 2.5 -8',  scale:0.50}, {type:'nerv',   pos:'-2.0 2.5 -8',  scale:0.48},
+  {type:'anx',    pos:'10.0 2.1 -9',  scale:0.52}, {type:'anx',    pos:'-10.0 2.1 -9', scale:0.52},
 
-      {type:'stress', pos:' 6.0 1.0 -10',  scale:0.60}, {type:'stress', pos:'-8.0 4.5 -9',   scale:0.35},
-      {type:'stress', pos:' 3.8 3.2 -15',  scale:0.48}, {type:'stress', pos:'-6.5 2.0 -12',  scale:0.55},
-      {type:'stress', pos:' 9.5 2.8 -8',   scale:0.40}, {type:'stress', pos:'-4.5 4.0 -11',  scale:0.38},
-      {type:'stress', pos:' 5.0 3.7 -7',   scale:0.62}, {type:'stress', pos:'-10 1.8 -14',  scale:0.45},
-      {type:'stress', pos:' 1.0 2.4 -13',  scale:0.52}, {type:'stress', pos:'-9.0 3.6 -6',   scale:0.30}
-    ];
+  // Ряд 3
+  {type:'stress', pos:' 5.0 3.2 -10', scale:0.60}, {type:'stress', pos:'-5.0 3.2 -10', scale:0.60},
+  {type:'nerv',   pos:' 9.0 3.0 -11', scale:0.45}, {type:'nerv',   pos:'-9.0 3.0 -11', scale:0.45},
+  {type:'anx',    pos:' 1.0 3.4 -10', scale:0.40}, {type:'anx',    pos:'-1.0 3.4 -10', scale:0.40},
+
+  // Ряд 4
+  {type:'nerv',   pos:' 7.0 4.1 -12', scale:0.50}, {type:'nerv',   pos:'-7.0 4.1 -12', scale:0.50},
+  {type:'stress', pos:' 3.0 4.3 -13', scale:0.42}, {type:'stress', pos:'-3.0 4.3 -13', scale:0.42},
+  {type:'anx',    pos:'11.0 3.9 -13', scale:0.48}, {type:'anx',    pos:'-11.0 3.9 -13',scale:0.48},
+
+  // Ряд 5 (дальний и высокий)
+  {type:'stress', pos:' 5.5 5.0 -14', scale:0.38}, {type:'stress', pos:'-5.5 5.0 -14', scale:0.38},
+  {type:'nerv',   pos:' 8.5 4.8 -15', scale:0.35}, {type:'nerv',   pos:'-8.5 4.8 -15', scale:0.35},
+  {type:'anx',    pos:' 0.0 5.3 -15', scale:0.65}, // большой в центре на высоте
+  {type:'anx',    pos:' 2.5 5.1 -14', scale:0.40}, {type:'anx',    pos:'-2.5 5.1 -14', scale:0.40}
+];
 
     document.getElementById('startGameBtn')?.addEventListener('click', startGame);
     document.getElementById('playAgainBtn')?.addEventListener('click', () => location.reload());
@@ -255,4 +262,5 @@
   </script>
 </body>
 </html>
+
 
