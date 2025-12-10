@@ -84,7 +84,7 @@
 <body>
 
   <div id="startPage">
-    <div id="logo">ГРАНДАКСИН<br>ПРОТИВ V2</div>
+    <div id="logo">ГРАНДАКСИН<br>ПРОТИВ V3</div>
     <div id="rules">Совместите прицел с симптомом<br>и нажмите на экран<br><br>Уничтожьте как можно больше за 30 секунд!</div>
     <button id="startGameBtn">НАЧАТЬ ИГРУ</button>
   </div>
@@ -141,46 +141,47 @@
     let gameTimer;
 
 const positions = [
-  // Ряд 1 — самый ближний, низко (0.8–1.6 м)
-  {type:'nerv',    pos:'  4.5  0.8 -6',   scale:0.65},
-  {type:'anx',     pos:' -4.5  0.9 -6',   scale:0.63},
-  {type:'stress',  pos:'  8.5  0.7 -7',   scale:0.60},
-  {type:'stress',  pos:' -8.5  0.7 -7',   scale:0.60},
+  // РЯД 1 — почти у ног (0.3–0.8 м)
+  {type:'nerv',    pos:'  5.0  0.4 -6',   scale:0.68},
+  {type:'anx',     pos:' -5.0  0.5 -6',   scale:0.66},
+  {type:'stress',  pos:'  9.0  0.3 -7',   scale:0.64},
+  {type:'stress',  pos:' -9.0  0.3 -7',   scale:0.64},
+  {type:'nerv',    pos:'  1.0  0.6 -5.5', scale:0.60},
 
-  // Ряд 2 — чуть дальше и выше (1.8–2.4 м)
-  {type:'anx',     pos:'  6.5  2.0 -9',   scale:0.58},
-  {type:'nerv',    pos:' -6.5  2.1 -9',   scale:0.59},
-  {type:'stress',  pos:'  2.0  2.4 -8.5', scale:0.52},
-  {type:'nerv',    pos:' -2.0  2.4 -8.5', scale:0.50},
-  {type:'anx',     pos:' 10.5  1.9 -10',  scale:0.55},
-  {type:'anx',     pos:'-10.5  1.9 -10',  scale:0.55},
+  // РЯД 2 — на уровне груди (1.4–1.9 м)
+  {type:'anx',     pos:'  7.0  1.6 -9',   scale:0.62},
+  {type:'nerv',    pos:' -7.0  1.7 -9',   scale:0.63},
+  {type:'stress',  pos:'  3.0  1.9 -8.5', scale:0.58},
+  {type:'stress',  pos:' -3.0  1.8 -8.5', scale:0.57},
+  {type:'anx',     pos:' 11.0  1.5 -10',  scale:0.59},
+  {type:'anx',     pos:'-11.0  1.5 -10',  scale:0.59},
 
-  // Ряд 3 — средний, высота 3.0–3.6 м
-  {type:'stress',  pos:'  5.5  3.3 -11',  scale:0.62},
-  {type:'stress',  pos:' -5.5  3.3 -11',  scale:0.62},
-  {type:'nerv',    pos:'  9.5  3.1 -12',  scale:0.48},
-  {type:'nerv',    pos:' -9.5  3.1 -12',  scale:0.48},
-  {type:'anx',     pos:'  1.0  3.6 -11',  scale:0.45},
-  {type:'anx',     pos:' -1.0  3.6 -11',  scale:0.45},
+  // РЯД 3 — на уровне головы и выше (2.8–3.5 м)
+  {type:'stress',  pos:'  6.0  3.2 -11',  scale:0.60},
+  {type:'stress',  pos:' -6.0  3.2 -11',  scale:0.60},
+  {type:'nerv',    pos:' 10.0  3.0 -12',  scale:0.52},
+  {type:'nerv',    pos:'-10.0  3.0 -12',  scale:0.52},
+  {type:'anx',     pos:'  2.0  3.5 -11',  scale:0.48},
+  {type:'anx',     pos:' -2.0  3.5 -11',  scale:0.},
 
-  // Ряд 4 — высоко, 4.2–4.8 м
-  {type:'nerv',    pos:'  7.5  4.5 -13',  scale:0.54},
-  {type:'nerv',    pos:' -7.5  4.5 -13',  scale:0.54},
-  {type:'stress',  pos:'  3.5  4.8 -14',  scale:0.46},
-  {type:'stress',  pos:' -3.5  4.8 -14',  scale:0.46},
-  {type:'anx',     pos:' 11.5  4.3 -14',  scale:0.50},
-  {type:'anx',     pos:'-11.5  4.3 -14',  scale:0.50},
+  // РЯД 4 — высоко в небе (4.5–5.2 м)
+  {type:'nerv',    pos:'  8.0  4.8 -13',  scale:0.55},
+  {type:'nerv',    pos:' -8.0  4.8 -13',  scale:0.55},
+  {type:'stress',  pos:'  4.0  5.2 -14',  scale:0.50},
+  {type:'stress',  pos:' -4.0  5.2 -14',  scale:0.50},
+  {type:'anx',     pos:' 12.0  4.6 -14',  scale:0.53},
+  {type:'anx',     pos:'-12.0  4.6 -14',  scale:0.53},
 
-  // Ряд 5 — самый дальний и самый высокий (5.2–6.2 м)
-  {type:'stress',  pos:'  6.0  5.8 -15',  scale:0.42},
-  {type:'stress',  pos:' -6.0  5.8 -15',  scale:0.42},
-  {type:'nerv',    pos:'  9.0  5.5 -16',  scale:0.38},
-  {type:'nerv',    pos:' -9.0  5.5 -16',  scale:0.38},
-  {type:'anx',     pos:'  0.0  6.2 -16',  scale:0.70}, // огромный в центре на высоте!
-  {type:'anx',     pos:'  3.0  5.9 -15',  scale:0.44},
-  {type:'anx',     pos:' -3.0  5.9 -15',  scale:0.44},
-  {type:'stress',  pos:' 12.0  5.3 -16', scale:0.40},
-  {type:'stress',  pos:'-12.0 5.3 -16', scale:0.40}
+  // РЯД 5 — почти в зените (5.8–7.0 м) — эпично!
+  {type:'stress',  pos:'  7.0  6.3 -15.5',scale:0.45},
+  {type:'stress',  pos:' -7.0  6.3 -15.5',scale:0.45},
+  {type:'nerv',    pos:' 10.0  6.0 -16',  scale:0.42},
+  {type:'nerv',    pos:'-10.0  6.0 -16',  scale:0.42},
+  {type:'anx',     pos:'  0.0  7.0 -16',  scale:0.75}, // ГИГАНТ В ЦЕНТРЕ НЕБА!
+  {type:'anx',     pos:'  3.5  6.5 -15',  scale:0.48},
+  {type:'anx',     pos:' -3.5  6.5 -15',  scale:0.48},
+  {type:'stress',  pos:' 13.0  5.8 -16', scale:0.40},
+  {type:'stress',  pos:'-13.0  5.8 -16', scale:0.40}
 ];
     document.getElementById('startGameBtn')?.addEventListener('click', startGame);
     document.getElementById('playAgainBtn')?.addEventListener('click', () => location.reload());
@@ -277,6 +278,7 @@ const positions = [
   </script>
 </body>
 </html>
+
 
 
 
