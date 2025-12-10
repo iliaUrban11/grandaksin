@@ -18,7 +18,7 @@
     #playAgainBtn{background:white;color:#027ACA;}
     button:hover{transform:scale(1.08);}
     #gameUI{position:fixed;inset:0;z-index:1000;pointer-events:none;display:none;padding:env(safe-area-inset-top,15px) 5vw 5vh 5vw;}
-    #topInfo{position:absolute;top:0;left:0;right:0;background:rgba(255,255,255,0.95);color:#027ACA;padding:16px 20px;text-align:center;border-bottom-left-radius:22px;border-bottom-right-radius:22px;box-shadow:0 8px 25px rgba(0,0,0,0.3);}
+    #topInfo{position:absolute;top:0;left:0;left:0;right:0;background:rgba(255,255,255,0.95);color:#027ACA;padding:16px 20px;text-align:center;border-bottom-left-radius:22px;border-bottom-right-radius:22px;box-shadow:0 8px 25px rgba(0,0,0,0.3);}
     #instruction{font-size:clamp(1.15rem,4.8vw,1.6rem);font-weight:700;line-height:1.4;margin-bottom:4px;}
     #timeInfo{font-size:clamp(0.9rem,3.6vw,1.2rem);font-weight:600;opacity:0.9;}
     #progress{position:absolute;bottom:6vh;left:5vw;right:5vw;display:flex;gap:10px;height:12px;}
@@ -129,17 +129,19 @@
         wrapper.setAttribute('position', item.pos);
         wrapper.setAttribute('scale', `${item.scale} ${item.scale} ${item.scale}`);
 
+        // Симптом
         const model = document.createElement('a-entity');
         model.setAttribute('gltf-model', `#${item.type}`);
         wrapper.appendChild(model);
 
+        // Взрыв
         const explosion = document.createElement('a-entity');
         explosion.setAttribute('gltf-model', '#destruction');
         explosion.setAttribute('visible', 'false');
         explosion.setAttribute('scale', `${item.scale} ${item.scale} ${item.scale}`);
         wrapper.appendChild(explosion);
 
-        // Только симптом поворачивается к игроку
+        // Поворачиваем только симптом
         model.addEventListener('model-loaded', () => {
           const tick = () => {
             if (!wrapper.isConnected) return;
@@ -150,7 +152,7 @@
           tick();
         });
 
-        // Клик — настоящий взрыв с анимацией
+        // При клике — настоящий взрыв
         wrapper.addEventListener('click', function hit() {
           if (!gameActive) return;
           wrapper.removeEventListener('click', hit);
@@ -160,16 +162,12 @@
 
           model.setAttribute('visible', 'false');
           explosion.setAttribute('visible', 'true');
-
-          // Запускаем встроенную анимацию из файла destruction.glb
           explosion.setAttribute('animation-mixer', 'clip:*;loop:once');
 
-          // Звук
           const sound = document.createElement('a-entity');
           sound.setAttribute('sound', 'src:#hit-sound;autoplay:true;volume:1');
           wrapper.appendChild(sound);
 
-          // Удаляем через 1.5 секунды
           setTimeout(() => wrapper.remove(), 1500);
         });
 
