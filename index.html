@@ -34,7 +34,7 @@
 <body>
 
   <div id="startPage">
-    <div id="logo">ГРАНДАКСИН<br>ПРОТИВ22</div>
+    <div id="logo">ГРАНДАКСИН<br>ПРОТИВ</div>
     <div id="rules">Совместите прицел с симптомом<br>и нажмите на экран<br><br>Уничтожьте как можно больше за 30 секунд!</div>
     <button id="startGameBtn">НАЧАТЬ ИГРУ</button>
   </div>
@@ -73,4 +73,137 @@
       <a-asset-item id="nerv"    src="red.glb"></a-asset-item>
       <a-asset-item id="anx"     src="green.glb"></a-asset-item>
       <a-asset-item id="stress"  src="blue.glb"></a-asset-item>
-      <a-asset-item id="destruction" src="destruction.glb"></a-asset
+      <a-asset-item id="destruction" src="destruction.glb"></a-asset-item>
+      <audio id="hit-sound" src="hit.mp3" preload="auto"></audio>
+    </a-assets>
+
+    <a-entity id="models"></a-entity>
+
+    <a-camera>
+      <a-cursor position="0 0 -1" geometry="primitive:ring;radiusInner:0.02;radiusOuter:0.04"
+                material="color:white;shader:flat;opacity:0.9"></a-cursor>
+    </a-camera>
+  </a-scene>
+
+  <!-- Главный скрипт — type="module" обходит CSP -->
+  <script type="module">
+    const scores = {nerv: 0, anx: 0, stress: 0};
+    const sceneEl = document.querySelector('a-scene');
+    const modelsGroup = document.getElementById('models');
+    let gameActive = false;
+    let gameTimer;
+
+    // 30 фиксированных позиций — по 10 каждого типа
+    const positions = [
+      {type:'nerv',   pos:' 8 2.2 -8',   scale:0.35}, {type:'nerv',   pos:'-6 1.8 -7',   scale:0.40},
+      {type:'nerv',   pos:' 4 3.0 -10',  scale:0.30}, {type:'nerv',   pos:'-9 2.5 -11',  scale:0.45},
+      {type:'nerv',   pos:'10 1.5 -9',   scale:0.38}, {type:'nerv',   pos:'-3 2.8 -6',   scale:0.32},
+      {type:'nerv',   pos:' 6 2.0 -12',  scale:0.42}, {type:'nerv',   pos:'-11 1.9 -8',  scale:0.36},
+      {type:'nerv',   pos:' 2 2.4 -14',  scale:0.40}, {type:'nerv',   pos:'-7 3.2 -13',  scale:0.33},
+
+      {type:'anx',    pos:' 7 1.8 -6',   scale:0.38}, {type:'anx',    pos:'-8 2.6 -9',   scale:0.42},
+      {type:'anx',    pos:' 5 2.2 -11',  scale:0.35}, {type:'anx',    pos:'-4 1.6 -8',   scale:0.40},
+      {type:'anx',    pos:' 9 2.8 -10',  scale:0.37}, {type:'anx',    pos:'-10 2.0 -12', scale:0.44},
+      {type:'anx',    pos:' 3 1.9 -7',   scale:0.36}, {type:'anx',    pos:'-5 3.0 -14',  scale:0.39},
+      {type:'anx',    pos:'11 2.3 -9',   scale:0.41}, {type:'anx',    pos:'-2 2.5 -10',  scale:0.34},
+
+      {type:'stress', pos:' 6 2.5 -9',   scale:0.40}, {type:'stress', pos:'-7 1.7 -10',  scale:0.37},
+      {type:'stress', pos:' 4 2.8 -13',  scale:0.43}, {type:'stress', pos:'-9 2.2 -7',   scale:0.36},
+      {type:'stress', pos:' 8 1.9 -12',  scale:0.39}, {type:'stress', pos:'-3 2.6 -11',  scale:0.41},
+      {type:'stress', pos:'10 2.1 -8',   scale:0.38}, {type:'stress', pos:'-6 3.1 -13',  scale:0.42},
+      {type:'stress', pos:' 2 2.3 -9',   scale:0.35}, {type:'stress', pos:'-8 2.7 -14',  scale:0.40}
+    ];
+
+    document.getElementById('startGameBtn')?.addEventListener('click', startGame);
+    document.getElementById('playAgainBtn')?.addEventListener('click', () => location.reload());
+
+    function startGame() {
+      document.getElementById('startPage').style.display = 'none';
+      document.getElementById('gameUI').style.display = 'block';
+      sceneEl.style.display = 'block';
+
+      scores.nerv = scores.anx = scores.stress = 0;
+      updateScales();
+      modelsGroup.innerHTML = '';
+      gameActive = true;
+
+      positions.forEach(item => {
+        const wrapper = document.createElement('a-entity');
+        wrapper.classList.add('clickable');
+        wrapper.setAttribute('position', item.pos);
+        wrapper.setAttribute('scale', `${item.scale} ${item.scale} ${item.scale}`);
+
+        const model = document.createElement('a-entity');
+        model.setAttribute('gltf-model', `#${item.type}`);
+        wrapper.appendChild(model);
+
+        const explosion = document.createElement('a-entity');
+        explosion.setAttribute('gltf-model', '#destruction');
+        explosion.setAttribute('visible', 'false');
+        explosion.setAttribute('scale', '0.01 0.01 0.01');
+        wrapper.appendChild(explosion);
+
+        model.addEventListener('model-loaded', () => {
+          const tick = () => {
+            if (!wrapper.isConnected) return;
+            wrapper.object3D.lookAt(sceneEl.camera.el.object3D.position);
+            wrapper.object3D.rotateY(Math.PI);
+            requestAnimationFrame(tick);
+          };
+          tick();
+        });
+
+        wrapper.addEventListener('click', function hit() {
+          if (!gameActive) return;
+          wrapper.removeEventListener('click', hit);
+          scores[item.type]++;
+          updateScales();
+
+          model.setAttribute('visible', 'false');
+          explosion.setAttribute('visible', 'true');
+          explosion.setAttribute('animation', `property:scale;to:${item.scale*7} ${item.scale*7} ${item.scale*7};dur:600;easing:easeOutCubic`);
+
+          const sound = document.createElement('a-entity');
+          sound.setAttribute('sound', 'src:#hit-sound;autoplay:true;volume:1');
+          wrapper.appendChild(sound);
+
+          setTimeout(() => wrapper.remove(), 1000);
+        });
+
+        modelsGroup.appendChild(wrapper);
+      });
+
+      let timeLeft = 30;
+      document.getElementById('timer').textContent = '30';
+      gameTimer = setInterval(() => {
+        timeLeft--;
+        document.getElementById('timer').textContent = timeLeft;
+        if (timeLeft <= 0) endGame();
+      }, 1000);
+    }
+
+    function updateScales() {
+      document.getElementById('nerv-fill').style.width   = Math.min(scores.nerv   * 10, 100) + '%';
+      document.getElementById('anx-fill').style.width    = Math.min(scores.anx    * 10, 100) + '%';
+      document.getElementById('stress-fill').style.width = Math.min(scores.stress * 10, 100) + '%';
+    }
+
+    function endGame() {
+      gameActive = false;
+      clearInterval(gameTimer);
+      setTimeout(() => {
+        document.getElementById('nerv-result').innerHTML   = `Нервозность: <b>${scores.nerv}</b>`;
+        document.getElementById('anx-result').innerHTML    = `Тревога: <b>${scores.anx}</b>`;
+        document.getElementById('stress-result').innerHTML = `Стресс: <b>${scores.stress}</b>`;
+
+        document.getElementById('end-nerv-fill').style.width   = Math.min(scores.nerv   * 10, 100) + '%';
+        document.getElementById('end-anx-fill').style.width    = Math.min(scores.anx    * 10, 100) + '%';
+        document.getElementById('end-stress-fill').style.width = Math.min(scores.stress * 10, 100) + '%';
+
+        document.getElementById('gameUI').style.display = 'none';
+        document.getElementById('endScreen').style.display = 'flex';
+      }, 800);
+    }
+  </script>
+</body>
+</html>
