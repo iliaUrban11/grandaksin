@@ -208,15 +208,22 @@ const positions = [
         explosion.setAttribute('scale', '0.01 0.01 0.01');
         wrapper.appendChild(explosion);
 
-        model.addEventListener('model-loaded', () => {
-          const tick = () => {
-            if (!wrapper.isConnected) return;
-            wrapper.object3D.lookAt(sceneEl.camera.el.object3D.position);
-            wrapper.object3D.rotateY(Math.PI);
-            requestAnimationFrame(tick);
-          };
-          tick();
-        });
+   
+
+
+model.addEventListener('model-loaded', () => {
+  // Только основная модель (симптом) поворачивается к игроку
+  const tick = () => {
+    if (!wrapper.isConnected) return;
+    model.object3D.lookAt(sceneEl.camera.el.object3D.position);
+    model.object3D.rotateY(Math.PI);
+    requestAnimationFrame(tick);
+  };
+  tick();
+});
+
+
+        
 
         wrapper.addEventListener('click', function hit() {
           if (!gameActive) return;
@@ -274,6 +281,7 @@ const positions = [
   </script>
 </body>
 </html>
+
 
 
 
