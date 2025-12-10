@@ -18,19 +18,21 @@
     #playAgainBtn{background:white;color:#027ACA;}
     button:hover{transform:scale(1.05);}
     #gameUI{position:fixed;z-index:1000;display:none;width:100%;pointer-events:none;}
-    #timer{position:fixed;top:20px;left:50%;transform:translateX(-50%);background:rgba(255,255,255,0.95);color:#027ACA;padding:12px 28px;border-radius:30px;font-size:2.2em;font-weight:900;}
+    #timer{position:fixed;top:20px;left:50%;transform:translateX(-50%);background:rgba(255,255,255,0.95);color:#027ACA;padding:12px 28px;border-radius:30px;font-size:2.2em;font-weight:900;box-shadow:0 8px 25px rgba(0,0,0,0.3);}
     #progress{position:fixed;top:90px;left:20px;right:20px;display:flex;gap:12px;}
-    .bar{flex:1;height:40px;background:rgba(255,255,255,0.15);border-radius:20px;overflow:hidden;position:relative;}
+    .bar{flex:1;height:40px;background:rgba(255,255,255,0.15);border-radius:20px;overflow:hidden;position:relative;box-shadow:inset 0 2px 10px rgba(0,0,0,0.2);}
     .fill{height:100%;width:0%;transition:width .7s ease;border-radius:20px;}
     .label{position:absolute;top:50%;left:18px;transform:translateY(-50%);font-size:15px;font-weight:700;color:white;text-shadow:1px 1px 3px black;}
     #nerv-fill{background:#00859D;}#anx-fill{background:#411D6B;}#stress-fill{background:#EB4C24;}
-    #uiText{position:fixed;bottom:20px;left:0;right:0;background:rgba(255,255,255,0.9);color:#027ACA;padding:14px 20px;font-size:1.15em;text-align:center;line-height:1.5;}
+    #uiText{position:fixed;bottom:20px;left:0;right:0;background:rgba(255,255,255,0.9);color:#027ACA;padding:14px 20px;font-size:1.15em;font-weight:600;text-align:center;line-height:1.5;box-shadow:0 -5px 20px rgba(0,0,0,0.15);}
+    #endTitle{font-size:3em;font-weight:900;margin-bottom:30px;}
+    #endResults{font-size:1.7em;line-height:2;margin:20px 0;}
   </style>
 </head>
 <body>
 
   <div id="startPage">
-    <div id="logo">ГРАНДАКСИН ПРОТИВ1</div>
+    <div id="logo">ГРАНДАКСИН ПРОТИВ11</div>
     <div id="rules">Совместите цель с летающим симптомом<br>и нажмите на экран.<br><br>Сбейте как можно больше за 30 секунд!</div>
     <button id="startGameBtn">НАЧАТЬ</button>
   </div>
@@ -61,12 +63,11 @@
     <button id="playAgainBtn">ИГРАТЬ ЕЩЁ РАЗ</button>
   </div>
 
-  <a-scene embedded arjs="trackingMethod:best;sourceType:webcam;debugUIEnabled:false;" renderer="antialias:true;" vr-mode-ui="enabled:false" device-orientation-permission-ui="enabled:false" style="display:none" raycaster="objects:.clickable" cursor="rayOrigin:mouse">
-    
+  <a-scene embedded arjs="trackingMethod:best;sourceType:webcam;debugUIEnabled:false" renderer="antialias:true" vr-mode-ui="enabled:false" device-orientation-permission-ui="enabled:false" style="display:none" raycaster="objects:.clickable" cursor="rayOrigin:mouse">
     <a-assets timeout="60000">
       <a-asset-item id="nerv" src="red.glb"></a-asset-item>
-      <a-asset-item id="anx" src="green.glb"></a-asset-item>
-      <a-asset-item id="stress" src="blue.glb"></a-asset-item>
+      <a-asset-item id="a" src="green.glb"></a-asset-item>
+      <a-asset-item id="s" src="blue.glb"></a-asset-item>
       <a-asset-item id="destruction" src="destruction.glb"></a-asset-item>
       <audio id="hit-sound" src="hit.mp3" preload="auto"></audio>
     </a-assets>
@@ -74,54 +75,56 @@
     <a-entity id="models"></a-entity>
 
     <a-camera>
-      <a-cursor position="0 0 -1" geometry="primitive:ring;radiusInner:0.02;radiusOuter:0.03" material="color:white;shader:flat;opacity:0.7"></a-cursor>
+      <a-cursor position="0 0 -1" geometry="primitive:ring;radiusInner:0.02;radiusOuter:0.03" material="color:white;shader:flat;opacity:0.8"></a-cursor>
     </a-camera>
   </a-scene>
 
   <script>
     'use strict';
-    let scores = {nerv:0,anx:0,stress:0};
-    let sceneEl = document.querySelector('a-scene');
-    let modelsGroup = document.getElementById('models');
-    let gameTimer, timeLeft = 30, gameActive = false;
 
-    // 30 фиксированных моделей (по 10 каждого типа)
-    const modelsData = [
-      // nerv
-      {type:'nerv', x:-5.5, y:3.2, z:-7, scale:0.42},
-      {type:'nerv', x:-3.8, y:1.8, z:-9, scale:0.35},
-      {type:'nerv', x:-6.8, y:4.0, z:-11, scale:0.48},
-      {type:'nerv', x:-2.5, y:2.5, z:-5.5, scale:0.33},
-      {type:'nerv', x:-7.5, y:2.0, z:-13, scale:0.5},
-      {type:'nerv', x:-4.2, y:3.8, z:-6, scale:0.38},
-      {type:'nerv', x:-6.0, y:1.5, z:-10, scale:0.4},
-      {type:'nerv', x:-3.0, y:2.8, z:-12, scale:0.36},
-      {type:'nerv', x:-5.0, y:4.5, z:-14, scale:0.45},
-      {type:'nerv', x:-4.5, y:1.2, z:-8, scale:0.37},
+    const scores = {nerv:0, anx:0, stress:0};
+    const sceneEl = document.querySelector('a-scene');
+    const modelsGroup = document.getElementById('models');
+    let gameActive = false;
+    let gameTimer;
 
-      // anx
-      {type:'anx', x:5.8, y:3.0, z:-7.5, scale:0.44},
-      {type:'anx', x:4.0, y:1.9, z:-9.5, scale:0.36},
-      {type:'anx', x:7.0, y:4.2, z:-11.5, scale:0.49},
-      {type:'anx', x:2.8, y:2.6, z:-6, scale:0.34},
-      {type:'anx', x:7.8, y:2.1, z:-13.5, scale:0.52},
-      {type:'anx', x:4.5, y:3.6, z:-8, scale:0.41},
-      {type:'anx', x:6.2, y:1.4, z:-10.5, scale:0.39},
-      {type:'anx', x:3.5, y:4.0, z:-14, scale:0.47},
-      {type:'anx', x:5.5, y:2.9, z:-5.5, scale:0.43},
-      {type:'anx', x:4.8, y:1.1, z:-12, scale:0.35},
+    // === 30 ЖЁСТКО ЗАДАННЫХ ПОЗИЦИЙ (по 10 на тип) ===
+    const positions = [
+      // Нервозность (red.glb) — 10 шт.
+      {type:'n', pos:'8 2.2 -8',   scale:0.35},
+      {type:'n', pos:'-6 1.8 -7',  scale:0.4},
+      {type:'n', pos:'4 3.0 -10',  scale:0.3},
+      {type:'n', pos:'-9 2.5 -11', scale:0.45},
+      {type:'n', pos:'10 1.5 -9',  scale:0.38},
+      {type:'n', pos:'-3 2.8 -6',  scale:0.32},
+      {type:'n', pos:'6 2.0 -12', scale:0.42},
+      {type:'n', pos:'-11 1.9 -8', scale:0.36},
+      {type:'n', pos:'2 2.4 -14',  scale:0.4},
+      {type:'n', pos:'-7 3.2 -13', scale:0.33},
 
-      // stress
-      {type:'stress', x:0, y:3.5, z:-10, scale:0.5},
-      {type:'stress', x:1.5, y:2.2, z:-6.5, scale:0.37},
-      {type:'stress', x:-1.5, y:3.0, z:-8.5, scale:0.39},
-      {type:'stress', x:0.8, y:4.2, z:-12.5, scale:0.48},
-      {type:'stress', x:-0.8, y:1.6, z:-14.5, scale:0.42},
-      {type:'stress', x:0, y:2.4, z:-5.5, scale:0.34},
-      {type:'stress', x:2.2, y:3.2, z:-11, scale:0.46},
-      {type:'stress', x:-2.2, y:1.9, z:-9, scale:0.38},
-      {type:'stress', x:1.8, y:2.7, z:-13, scale:0.44},
-      {type:'stress', x:-1.8, y:4.0, z:-7.5, scale:0.47}
+      // Тревога (green.glb) — 10 шт.
+      {type:'a', pos:'7 1.8 -6',   scale:0.38},
+      {type:'a', pos:'-8 2.6 -9',  scale:0.42},
+      {type:'a', pos:'5 2.2 -11',  scale:0.35},
+      {type:'a', pos:'-4 1.6 -8',  scale:0.4},
+      {type:'a', pos:'9 2.8 -10',  scale:0.37},
+      {type:'a', pos:'-10 2.0 -12',scale:0.44},
+      {type:'a', pos:'3 1.9 -7',   scale:0.36},
+      {type:'a', pos:'-5 3.0 -14', scale:0.39},
+      {type:'a', pos:'11 2.3 -9',  scale:0.41},
+      {type:'a', pos:'-2 2.5 -10', scale:0.34},
+
+      // Стресс (blue.glb) — 10 шт.
+      {type:'s', pos:'6 2.5 -9',   scale:0.4},
+      {type:'s', pos:'-7 1.7 -10', scale:0.37},
+      {type:'s', pos:'4 2.8 -13',  scale:0.43},
+      {type:'s', pos:'-9 2.2 -7',  scale:0.36},
+      {type:'s', pos:'8 1.9 -12',  scale:0.39},
+      {type:'s', pos:'-3 2.6 -11', scale:0.41},
+      {type:'s', pos:'10 2.1 -8',  scale:0.38},
+      {type:'s', pos:'-6 3.1.8 -13',scale:0.42},
+      {type:'s', pos:'2 2.3 -9',   scale:0.35},
+      {type:'s', pos:'-8 2.7 -14', scale:0.4}
     ];
 
     document.getElementById('startGameBtn').addEventListener('click', startGame);
@@ -131,15 +134,68 @@
       document.getElementById('startPage').style.display = 'none';
       document.getElementById('gameUI').style.display = 'block';
       sceneEl.style.display = 'block';
-      scores = {nerv:0,anx:0,stress:0};
-      timeLeft = 30;
+
+      Object.keys(scores).forEach(k => scores[k] = 0);
       document.getElementById('timer').textContent = '30';
-      gameActive = true;
       updateScales();
 
-      if (sceneEl.hasLoaded) initAR();
-      else sceneEl.addEventListener('loaded', initAR);
+      gameActive = true;
+      modelsGroup.innerHTML = '';
 
+      // Создаём все 30 моделей по жёстким координатам
+      positions.forEach(item => {
+        const wrapper = document.createElement('a-entity');
+        wrapper.classList.add('clickable');
+        wrapper.setAttribute('position', item.pos);
+        wrapper.setAttribute('scale', `${item.scale} ${item.scale} ${item.scale}`);
+
+        const model = document.createElement('a-entity');
+        model.setAttribute('gltf-model', `#${item.type === 'n' ? 'nerv' : item.type === 'a' ? 'anx' : 'stress'}`);
+        wrapper.appendChild(model);
+
+        const explosion = document.createElement('a-entity');
+        explosion.setAttribute('gltf-model', '#destruction');
+        explosion.setAttribute('visible', 'false');
+        explosion.setAttribute('scale', '0.01 0.01 0.01');
+        wrapper.appendChild(explosion);
+
+        // Всегда смотрят на камеру
+        model.addEventListener('model-loaded', () => {
+          const tick = () => {
+            if (!wrapper.parentNode) return;
+            wrapper.object3D.lookAt(sceneEl.camera.getWorldPosition(new THREE.Vector3()));
+            wrapper.object3D.rotateY(Math.PI);
+            requestAnimationFrame(tick);
+          };
+          tick();
+        });
+
+        // Клик — уничтожение
+        wrapper.addEventListener('click', function hit() {
+          if (!gameActive) return;
+          wrapper.removeEventListener('click', hit);
+
+          const key = item.type === 'n' ? 'nerv' : item.type === 'a' ? 'anx' : 'stress';
+          scores[key]++;
+          updateScales();
+
+          model.setAttribute('visible', 'false');
+          explosion.setAttribute('visible', 'true');
+          explosion.setAttribute('animation', `property:scale;to:${item.scale*6} ${item.scale*6} ${item.scale*6};dur:700;easing:easeOutCubic`);
+          explosion.setAttribute('animation__fade', 'property:material.opacity;from:1;to:0;dur:900;easing:linear');
+
+          const sound = document.createElement('a-entity');
+          sound.setAttribute('sound', 'src:#hit-sound;autoplay:true;volume:0.9');
+          wrapper.appendChild(sound);
+
+          setTimeout(() => wrapper.remove(), 1000);
+        });
+
+        modelsGroup.appendChild(wrapper);
+      });
+
+      // Таймер 30 секунд
+      let timeLeft = 30;
       gameTimer = setInterval(() => {
         timeLeft--;
         document.getElementById('timer').textContent = timeLeft;
@@ -147,82 +203,28 @@
       }, 1000);
     }
 
+    function updateScales() {
+      document.getElementById('nerv-fill').style.width = Math.min(scores.nerv * 10, 100) + '%';
+      document.getElementById('anx-fill').style.width = Math.min(scores.anx * 10, 100) + '%';
+      document.getElementById('stress-fill').style.width = Math.min(scores.stress * 10, 100) + '%';
+    }
+
     function endGame() {
       gameActive = false;
       clearInterval(gameTimer);
+
       setTimeout(() => {
         document.getElementById('nerv-result').innerHTML = `Нервозность: <b>${scores.nerv}</b>`;
         document.getElementById('anx-result').innerHTML = `Тревога: <b>${scores.anx}</b>`;
         document.getElementById('stress-result').innerHTML = `Стресс: <b>${scores.stress}</b>`;
-        setTimeout(() => {
-          document.getElementById('end-nerv-fill').style.width = Math.min(scores.nerv*10,100)+'%';
-          document.getElementById('end-anx-fill').style.width = Math.min(scores.anx*10,100)+'%';
-          document.getElementById('end-stress-fill').style.width = Math.min(scores.stress*10,100)+'%';
-        }, 300);
+
+        ['nerv','anx','stress'].forEach(t => {
+          document.getElementById(`end-${t}-fill`).style.width = Math.min(scores[t] * 10, 100) + '%';
+        });
+
         document.getElementById('gameUI').style.display = 'none';
         document.getElementById('endScreen').style.display = 'flex';
       }, 800);
-    }
-
-    function updateScales() {
-      document.getElementById('nerv-fill').style.width = Math.min(scores.nerv*10,100)+'%';
-      document.getElementById('anx-fill').style.width = Math.min(scores.anx*10,100)+'%';
-      document.getElementById('stress-fill').style.width = Math.min(scores.stress*10,100)+'%';
-    }
-
-    function initAR() {
-      modelsData.forEach(createModel);
-    }
-
-    function createModel(data) {
-      if (!gameActive) return;
-
-      const wrapper = document.createElement('a-entity');
-      wrapper.classList.add('clickable');
-
-      const model = document.createElement('a-entity');
-      model.setAttribute('gltf-model', `#${data.type}`);
-      wrapper.appendChild(model);
-
-      const explosion = document.createElement('a-entity');
-      explosion.setAttribute('gltf-model', '#destruction');
-      explosion.setAttribute('visible', 'false');
-      wrapper.appendChild(explosion);
-
-      wrapper.setAttribute('position', `${data.x} ${data.y} ${data.z}`);
-      wrapper.setAttribute('scale', `${data.scale} ${data.scale} ${data.scale}`);
-
-      // Billboard
-      wrapper.addEventListener('model-loaded', () => {
-        const tick = () => {
-          if (!wrapper.parentNode) return;
-          wrapper.object3D.lookAt(sceneEl.camera.position);
-          wrapper.object3D.rotateY(Math.PI);
-          requestAnimationFrame(tick);
-        };
-        tick();
-      });
-
-      // Уничтожение без респавна
-      wrapper.addEventListener('click', function hit() {
-        if (!gameActive) return;
-        wrapper.removeEventListener('click', hit);
-
-        scores[data.type]++;
-        updateScales();
-
-        model.setAttribute('visible', 'false');
-        explosion.setAttribute('visible', 'true');
-
-        const sound = document.createElement('a-entity');
-        sound.setAttribute('sound', 'src:#hit-sound;autoplay:true;volume:0.9');
-        wrapper.appendChild(sound);
-
-        // Удаляем навсегда через 1.3 сек (время на взрыв)
-        setTimeout(() => wrapper.remove(), 1300);
-      });
-
-      modelsGroup.appendChild(wrapper);
     }
   </script>
 </body>
