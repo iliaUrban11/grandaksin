@@ -38,7 +38,7 @@
 <body>
 
   <div id="startPage">
-    <div id="logo">ГРАНДАКСИН<br>ПРОТИВ V5</div>
+    <div id="logo">ГРАНДАКСИН<br>ПРОТИВ</div>
     <div id="rules">Совместите прицел с симптомом<br>и нажмите на экран<br><br>Уничтожьте как можно больше за 30 секунд!</div>
     <button id="startGameBtn">НАЧАТЬ ИГРУ</button>
   </div>
@@ -96,16 +96,16 @@
       {type:'stress', pos:'  2.0  2.4 -7.5', scale:0.58}, {type:'nerv',   pos:' -2.0  2.3 -7.5', scale:0.57},
       {type:'anx',    pos:'  9.5  1.9 -9',   scale:0.60}, {type:'anx',    pos:' -9.5  1.9 -9',   scale:0.60},
       {type:'stress', pos:'  0.0  2.6 -8',   scale:0.70},
-      {type:'nerv',   pos:'  6.5  3.8 -11',  scale:0.62}, {type:'nerv',   pos:' -6.5  3.8 -11',  scale:0.62},
-      {type:'stress', pos:'  8.5  3.5 -12',  scale:0.55}, {type:'stress', pos:' -8.5  3.5 -12',  scale:0.55},
-      {type:'anx',    pos:'  3.0  4.2 -12',  scale:0.58}, {type:'anx',    pos:' -3.0  4.2 -12',  scale:0.58},
-      {type:'nerv',   pos:' 11.0  3.3 -13',  scale:0.52}, {type:'nerv',   pos:'-11.0  3.3 -13',  scale:0.52},
-      {type:'stress', pos:'  5.0  5.3 -14',  scale:0.50}, {type:'stress', pos:' -5.0  5.3 -14',  scale:0.50},
-      {type:'anx',    pos:'  8.0  5.0 -15',  scale:0.48}, {type:'anx',    pos:' -8.0  5.0 -15',  scale:0.48},
-      {type:'nerv',   pos:'  0.0  6.0 -16',  scale:0.85},
-      {type:'stress', pos:' 10.5  4.8 -15',  scale:0.46}, {type:'stress', pos:'-10.5  4.8 -15',  scale:0.46},
-      {type:'anx',    pos:'   2.0  5.6 -14',  scale:0.44}, {type:'anx',    pos:' -2.0  5.6 -14',  scale:0.44},
-      {type:'nerv',   pos:' 12.0  5.2 -16',  scale:0.45}, {type:'nerv',   pos:'-12.0  5.2 -16',  scale:0.45}
+      {type:'nerv',   pos:'  :'  6.5  3.8 -11',  scale:0.62}, {type:'nerv',   pos:' -6.5  3.8 -11',  scale:0.62},
+      {type:'stress', pos  :'  8.5  3.5 -12',  scale:0.55}, {type:'stress', pos:' -8.5  3.5 -12',  scale:0.55},
+      {type:'anx',    pos  :'  3.0  4.2 -12',  scale:0.58}, {type:'anx',    pos:' -3.0  4.2 -12',  scale:0.58},
+      {type:'nerv',   pos  :' 11.0  3.3 -13',  scale:0.52}, {type:'nerv',   pos:'-11.0  3.3 -13',  scale:0.52},
+      {type:'stress', pos  :'  5.0  5.3 -14',  scale:0.50}, {type:'stress', pos:' -5.0  5.3 -14',  scale:0.50},
+      {type:'anx',    pos  :'  8.0  5.0 -15',  scale:0.48}, {type:'anx',    pos:' -8.0  5.0 -15',  scale:0.48},
+      {type:'nerv',   pos  :'  0.0  6.0 -16',  scale:0.85},
+      {type:'stress', pos  :' 10.5  4.8 -15',  scale:0.46}, {type:'stress', pos:'-10.5  4.8 -15',  scale:0.46},
+      {type:'anx',    pos  :'  2.0  5.6 -14',  scale:0.44}, {type:'anx',    pos:' -2.0  5.6 -14',  scale:0.44},
+      {type:'nerv',   pos  :' 12.0  5.2 -16',  scale:0.45}, {type:'nerv',   pos:'-12.0  5.2 -16',  scale:0.45}
     ];
 
     document.getElementById('startGameBtn').addEventListener('click', startGame);
@@ -129,27 +129,30 @@
         wrapper.setAttribute('position', item.pos);
         wrapper.setAttribute('scale', `${item.scale} ${item.scale} ${item.scale}`);
 
+        // Сам симптом
         const model = document.createElement('a-entity');
         model.setAttribute('gltf-model', `#${item.type}`);
         wrapper.appendChild(model);
 
+        // Взрыв (с анимацией из glb)
         const explosion = document.createElement('a-entity');
         explosion.setAttribute('gltf-model', '#destruction');
         explosion.setAttribute('visible', 'false');
-        explosion.setAttribute('scale', '0.01 0.01 0.01');
+        explosion.setAttribute('scale', `${item.scale} ${item.scale} ${item.scale}`); // тот же размер, что и симптом
         wrapper.appendChild(explosion);
 
-        // КЛЮЧЕВОЕ ИЗМЕНЕНИЕ: поворачивается ТОЛЬКО модель, а не весь wrapper!
+        // Только симптом поворачивается к игроку
         model.addEventListener('model-loaded', () => {
           const tick = () => {
             if (!wrapper.isConnected) return;
             model.object3D.lookAt(sceneEl.camera.el.object3D.position);
-            model.object3D.rotateY(Math.PI); // чтобы смотрел лицом, а не задом
+            model.object3D.rotateY(Math.PI);
             requestAnimationFrame(tick);
           };
           tick();
         });
 
+        // При попадании — запускаем настоящую анимацию взрыва
         wrapper.addEventListener('click', function hit() {
           if (!gameActive) return;
           wrapper.removeEventListener('click', hit);
@@ -159,13 +162,17 @@
 
           model.setAttribute('visible', 'false');
           explosion.setAttribute('visible', 'true');
-          explosion.setAttribute('animation', `property:scale;to:${item.scale*7} ${item.scale*7} ${item.scale*7};dur:600;easing:easeOutCubic`);
 
+          // Запускаем встроенную анимацию из destruction.glb
+          explosion.setAttribute('animation-mixer', 'clip:*;loop:once;crossFadeDuration:0.1');
+
+          // Звук
           const sound = document.createElement('a-entity');
           sound.setAttribute('sound', 'src:#hit-sound;autoplay:true;volume:1');
           wrapper.appendChild(sound);
 
-          setTimeout(() => wrapper.remove(), 1000);
+          // Удаляем через 1.5 сек (подгони под длину своей анимации)
+          setTimeout(() => wrapper.remove(), 1500);
         });
 
         modelsGroup.appendChild(wrapper);
@@ -200,4 +207,3 @@
   </script>
 </body>
 </html>
-
