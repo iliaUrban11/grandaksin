@@ -141,47 +141,25 @@
     let gameTimer;
 
 const positions = [
-  // РЯД 1 — почти у ног (0.3–0.8 м)
-  {type:'nerv',    pos:'  5.0  0.4 -6',   scale:0.68},
-  {type:'anx',     pos:' -5.0  0.5 -6',   scale:0.66},
-  {type:'stress',  pos:'  9.0  0.3 -7',   scale:0.64},
-  {type:'stress',  pos:' -9.0  0.3 -7',   scale:0.64},
-  {type:'nerv',    pos:'  1.0  0.6 -5.5', scale:0.60},
+  {type:'nerv',    pos:'  4.5  0.5 -6',   scale:0.70}, {type:'anx',     pos:' -4.5  0.6 -6',   scale:0.68},
+  {type:'stress',  pos:'  8.5  0.4 -7',   scale:0.66}, {type:'stress',  pos:' -8.5  0.4 -7',   scale:0.66},
 
-  // РЯД 2 — на уровне груди (1.4–1.9 м)
-  {type:'anx',     pos:'  7.0  1.6 -9',   scale:0.62},
-  {type:'nerv',    pos:' -7.0  1.7 -9',   scale:0.63},
-  {type:'stress',  pos:'  3.0  1.9 -8.5', scale:0.58},
-  {type:'stress',  pos:' -3.0  1.8 -8.5', scale:0.57},
-  {type:'anx',     pos:' 11.0  1.5 -10',  scale:0.59},
-  {type:'anx',     pos:'-11.0  1.5 -10',  scale:0.59},
+  {type:'anx',     pos:'  6.5  1.8 -9',   scale:0.64}, {type:'nerv',    pos:' -6.5  1.9 -9',   scale:0.65},
+  {type:'stress',  pos:'  2.5  2.4 -8.5', scale:0.58}, {type:'nerv',    pos:' -2.5  2.3 -8.5', scale:0.57},
+  {type:'anx',     pos:' 10.5  1.6 -10',  scale:0.60}, {type:'anx',     pos:'-10.5  1.6 -10',  scale:0.60},
 
-  // РЯД 3 — на уровне головы и выше (2.8–3.5 м)
-  {type:'stress',  pos:'  6.0  3.2 -11',  scale:0.60},
-  {type:'stress',  pos:' -6.0  3.2 -11',  scale:0.60},
-  {type:'nerv',    pos:' 10.0  3.0 -12',  scale:0.52},
-  {type:'nerv',    pos:'-10.0  3.0 -12',  scale:0.52},
-  {type:'anx',     pos:'  2.0  3.5 -11',  scale:0.48},
-  {type:'anx',     pos:' -2.0  3.5 -11',  scale:0.},
+  {type:'stress',  pos:'  5.5  3.3 -11',  scale:0.67}, {type:'stress',  pos:' -5.5  3.3 -11',  scale:0.67},
+  {type:'nerv',     pos:'  9.5  3.1 -12',  scale:0.55}, {type:'n',       pos:' -9.5  3.1 -12',  scale:0.55},
+  {type:'anx',     pos:'  0.0  4.0 -11',  scale:0.72},
 
-  // РЯД 4 — высоко в небе (4.5–5.2 м)
-  {type:'nerv',    pos:'  8.0  4.8 -13',  scale:0.55},
-  {type:'nerv',    pos:' -8.0  4.8 -13',  scale:0.55},
-  {type:'stress',  pos:'  4.0  5.2 -14',  scale:0.50},
-  {type:'stress',  pos:' -4.0  5.2 -14',  scale:0.50},
-  {type:'anx',     pos:' 12.0  4.6 -14',  scale:0.53},
-  {type:'anx',     pos:'-12.0  4.6 -14',  scale:0.53},
+  {type:'nerv',    pos:'  7.5  4.8 -13',  scale:0.60}, {type:'nerv',    pos:' -7.5  4.8 -13',  scale:0.60},
+  {type:'stress',  pos:'  3.5  5.3 -14',  scale:0.54}, {type:'stress',  pos:' -3.5  5.3 -14',  scale:0.54},
+  {type:'anx',     pos:' 11.5  4.6 -14',  scale:0.58}, {type:'anx',     pos:'-11.5  4.6 -14',  scale:0.58},
 
-  // РЯД 5 — почти в зените (5.8–7.0 м) — эпично!
-  {type:'stress',  pos:'  7.0  6.3 -15.5',scale:0.45},
-  {type:'stress',  pos:' -7.0  6.3 -15.5',scale:0.45},
-  {type:'nerv',    pos:' 10.0  6.0 -16',  scale:0.42},
-  {type:'nerv',    pos:'-10.0  6.0 -16',  scale:0.42},
-  {type:'anx',     pos:'  0.0  7.0 -16',  scale:0.75}, // ГИГАНТ В ЦЕНТРЕ НЕБА!
-  {type:'anx',     pos:'  3.5  6.5 -15',  scale:0.48},
-  {type:'anx',     pos:' -3.5  6.5 -15',  scale:0.48},
-  {type:'stress',  pos:' 13.0  5.8 -16', scale:0.40},
-  {type:'stress',  pos:'-13.0  5.8 -16', scale:0.40}
+  {type:'stress',  pos:'  6.0  6.0 -15.5',scale:0.50}, {type:'stress',  pos:' -6.0  6.0 -15.5',scale:0.50},
+  {type:'nerv',    pos:'  9.0  5.7 -16',  scale:0.46}, {type:'nerv',    pos:' -9.0  5.7 -16',  scale:0.46},
+  {type:'anx',     pos:'  0.0  6.2 -16',  scale:0.80}, // гигант в небе
+  {type:'anx',     pos:'  3.0  5.9 -15',  scale:0.48}, {type:'anx',     pos:' -3.0  5.9 -15',  scale:0.48}
 ];
     document.getElementById('startGameBtn')?.addEventListener('click', startGame);
     document.getElementById('playAgainBtn')?.addEventListener('click', () => location.reload());
@@ -278,6 +256,7 @@ const positions = [
   </script>
 </body>
 </html>
+
 
 
 
