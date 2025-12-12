@@ -6,7 +6,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <script src="https://aframe.io/releases/1.6.0/aframe.min.js"></script>
   <script src="https://raw.githack.com/AR-js-org/AR.js/3.4.7/aframe/build/aframe-ar-nft.js"></script>
-
   <style>
     *{margin:0;padding:0;box-sizing:border-box;}
     body{
@@ -14,17 +13,14 @@
       background:linear-gradient(135deg,#027ACA 0%,#00b894 100%);
       overflow:hidden;height:100vh;color:white;
     }
-
     #startPage,#endScreen{
       position:fixed;inset:0;z-index:2000;display:flex;flex-direction:column;
       justify-content:center;align-items:center;text-align:center;padding:5vh 5vw;
     }
     #startPage{background:rgba(255,255,255,0.96);color:#027ACA;}
     #endScreen{background:rgba(2,122,202,0.98);color:white;display:none;}
-
     #logo{font-size:clamp(2.5rem,9vw,4.5rem);font-weight:900;margin-bottom:3vh;}
     #rules{font-size:clamp(1.1rem,4.5vw,1.6rem);line-height:1.6;margin:4vh 0;max-width:90%;}
-
     button{
       padding:16px 60px;background:#027ACA;color:white;font-size:clamp(1.4rem,5.5vw,1.9rem);
       font-weight:bold;border:none;border-radius:50px;cursor:pointer;
@@ -32,8 +28,6 @@
     }
     #playAgainBtn{background:white;color:#027ACA;}
     button:hover{transform:scale(1.08);}
-
-    /* Верхняя плашка */
     #gameUI{
       position:fixed;inset:0;z-index:1000;pointer-events:none;display:none;
       padding:env(safe-area-inset-top,15px) 5vw 5vh 5vw;
@@ -43,23 +37,19 @@
       background:rgba(255,255,255,0.95);color:#027ACA;
       padding:16px 20px;text-align:center;
       border-bottom-left-radius:22px;
-      box-shadow:0 8px 25px rgba(0,0,0,0.3);
+      box-shadow:0 0 8px 25px rgba(0,0,0,0.3);
     }
     #instruction{font-size:clamp(1.15rem,4.8vw,1.6rem);font-weight:700;line-height:1.4;margin-bottom:4px;}
     #timeInfo{font-size:clamp(0.9rem,3.6vw,1.2rem);font-weight:600;opacity:0.9;}
-
-    /* Мини-прогресс внизу */
     #progress{
       position:absolute;bottom:6vh;left:5vw;right:5vw;
       display:flex;gap:10px;height:12px;
     }
     .mini-bar{flex:1;height:100%;background:rgba(255,255,255,0.25);border-radius:8px;overflow:hidden;}
     .mini-fill{height:100%;width:0%;transition:width 0.6s ease;}
-    #nerv-fill   {background:#00859D;}
-    #anx-fill    {background:#411D6B;}
+    #nerv-fill {background:#00859D;}
+    #anx-fill {background:#411D6B;}
     #stress-fill {background:#EB4C24;}
-
-    /* Финальный экран — исправленные прогресс-бары */
     #endTitle{font-size:clamp(2.2rem,8vw,3.8rem);font-weight:900;margin-bottom:4vh;}
     #finalText{font-size:clamp(1.3rem,5vw,2rem);margin:4vh 0;}
     #endProgress{
@@ -76,8 +66,8 @@
       padding-right:24px;font-size:1.8rem;font-weight:900;color:white;
       text-shadow:2px 2px 8px black;transition:width 1.2s ease-out;
     }
-    #end-nerv-fill   {background:#00859D;}
-    #end-anx-fill    {background:#411D6B;}
+    #end-nerv-fill {background:#00859D;}
+    #end-anx-fill {background:#411D6B;}
     #end-stress-fill {background:#EB4C24;}
   </style>
 </head>
@@ -94,10 +84,9 @@
       <div id="instruction">Наведите прицел на недуг<br>и нажмите на экран</div>
       <div id="timeInfo">Оставшееся время: <span id="timer">30</span></div>
     </div>
-
     <div id="progress">
-      <div class="mini-bar"><div id="nerv-fill"   class="mini-fill"></div></div>
-      <div class="mini-bar"><div id="anx-fill"    class="mini-fill"></div></div>
+      <div class="mini-bar"><div id="nerv-fill" class="mini-fill"></div></div>
+      <div class="mini-bar"><div id="anx-fill" class="mini-fill"></div></div>
       <div class="mini-bar"><div id="stress-fill" class="mini-fill"></div></div>
     </div>
   </div>
@@ -106,8 +95,8 @@
     <div id="endTitle">Отличный результат!</div>
     <div id="finalText">Вы уничтожили</div>
     <div id="endProgress">
-      <div class="end-row"><div class="end-label">Нервозность</div><div class="end-bar"><div id="end-nerv-fill"   class="end-fill">0</div></div></div>
-      <div class="end-row"><div class="end-label">Тревога</div>     <div class="end-bar"><div id="end-anx-fill"    class="end-fill">0</div></div></div>
+      <div class="end-row"><div class="end-label">Нервозность</div><div class="end-bar"><div id="end-nerv-fill" class="end-fill">0</div></div></div>
+      <div class="end-row"><div class="end-label">Тревога</div>     <div class="end-bar"><div id="end-anx-fill" class="end-fill">0</div></div></div>
       <div class="end-row"><div class="end-label">Стресс</div>     <div class="end-bar"><div id="end-stress-fill" class="end-fill">0</div></div></div>
     </div>
     <button id="playAgainBtn">ИГРАТЬ ЕЩЁ РАЗ</button>
@@ -116,11 +105,11 @@
   <a-scene embedded arjs="trackingMethod:best;sourceType:webcam;debugUIEnabled:false"
            renderer="antialias:true" vr-mode-ui="enabled:false" device-orientation-permission-ui="enabled:false"
            style="display:none" raycaster="objects:.clickable" cursor="rayOrigin:mouse">
-
+    
     <a-assets timeout="120000">
-      <a-asset-item id="nerv"    src="red.glb"></a-asset-item>
-      <a-asset-item id="anx"     src="green.glb"></a-asset-item>
-      <a-asset-item id="stress"  src="blue.glb"></a-asset-item>
+      <a-asset-item id="nerv" src="red.glb"></a-asset-item>
+      <a-asset-item id="anx" src="green.glb"></a-asset-item>
+      <a-asset-item id="stress" src="blue.glb"></a-asset-item>
       <a-asset-item id="destruction" src="destruction.glb"></a-asset-item>
       <audio id="hit-sound" src="hit.mp3" preload="auto"></audio>
     </a-assets>
@@ -134,33 +123,47 @@
   </a-scene>
 
   <script type="module">
+    'use strict';
     const scores = {nerv:0, anx:0, stress:0};
     const sceneEl = document.querySelector('a-scene');
     const modelsGroup = document.getElementById('models');
     let gameActive = false;
     let gameTimer;
 
-const positions = [
-  {type:'nerv',    pos:'  4.5  0.5 -6',   scale:0.70}, {type:'anx',     pos:' -4.5  0.6 -6',   scale:0.68},
-  {type:'stress',  pos:'  8.5  0.4 -7',   scale:0.66}, {type:'stress',  pos:' -8.5  0.4 -7',   scale:0.66},
+    // 30 фиксированных моделей — красиво, без пересечений, 160° поле зрения
+    const modelsData = [
+      {type:'nerv',    pos:' 4.5 0.5 -6',   scale:0.70},
+      {type:'anx',     pos:' -4.5 0.6 -6',  scale:0.68},
+      {type:'stress',  pos:' 8.5 0.4 -7',   scale:0.66},
+      {type:'stress',  pos:' -8.5 0.4 -7',  scale:0.66},
+      {type:'anx',     pos:' 6.5 1.8 -9',   scale:0.64},
+      {type:'nerv',    pos:' -6.5 1.9 -9',  scale:0.65},
+      {type:'stress',  pos:' 2.5 2.4 -8.5', scale:0.58},
+      {type:'nerv',    pos:' -2.5 2.3 -8.5',scale:0.57},
+      {type:'anx',     pos:'10.5 1.6 -10',  scale:0.60},
+      {type:'anx',     pos:'-10.5 1.6 -10',  scale:0.60},
+      {type:'stress',  pos:' 5.5 3.3 -11',  scale:0.67},
+      {type:'stress',  pos:' -5.5 3.3 -11',  scale:0.67},
+      {type:'nerv',    pos:' 9.5 3.1 -12',  scale:0.55},
+      {type:'nerv',    pos:' -9.5 3.1 -12',  scale:0.55},
+      {type:'anx',     pos:' 0.0 4.0 -11',  scale:0.72},
+      {type:'nerv',    pos:' 7.5 4.8 -13',  scale:0.60},
+      {type:'nerv',    pos:' -7.5 4.8 -13',  scale:0.60},
+      {type:'stress',  pos:' 3.5 5.3 -14',  scale:0.54},
+      {type:'stress',  pos:' -3.5 5.3 -14',  scale:0.54},
+      {type:'anx',     pos:'11.5 4.6 -14',  scale:0.58},
+      {type:'anx',     pos:'-11.5 4.6 -14',  scale:0.58},
+      {type:'stress',  pos:' 6.0 6.0 -15.5',scale:0.50},
+      {type:'stress',  pos:' -6.0 6.0 -15.5',scale:0.50},
+      {type:'nerv',    pos:' 9.0 5.7 -16',  scale:0.46},
+      {type:'nerv',    pos:' -9.0 5.7 -16',  scale:0.46},
+      {type:'anx',     pos:' 0.0 6.2 -16',  scale:0.80},
+      {type:'anx',     pos:' 3.0 5.9 -15',  scale:0.48},
+      {type:'anx',     pos:' -3.0 5.9 -15',  scale:0.48},
+      {type:'nerv',    pos:' 1.8 1.2 -5',   scale:0.62},
+      {type:'stress',  pos:' -1.8 1.3 -5',  scale:0.63}
+    ];
 
-  {type:'anx',     pos:'  6.5  1.8 -9',   scale:0.64}, {type:'nerv',    pos:' -6.5  1.9 -9',   scale:0.65},
-  {type:'stress',  pos:'  2.5  2.4 -8.5', scale:0.58}, {type:'nerv',    pos:' -2.5  2.3 -8.5', scale:0.57},
-  {type:'anx',     pos:' 10.5  1.6 -10',  scale:0.60}, {type:'anx',     pos:'-10.5  1.6 -10',  scale:0.60},
-
-  {type:'stress',  pos:'  5.5  3.3 -11',  scale:0.67}, {type:'stress',  pos:' -5.5  3.3 -11',  scale:0.67},
-  {type:'nerv',     pos:'  9.5  3.1 -12',  scale:0.55}, {type:'n',       pos:' -9.5  3.1 -12',  scale:0.55},
-  {type:'anx',     pos:'  0.0  4.0 -11',  scale:0.72},
-
-  {type:'nerv',    pos:'  7.5  4.8 -13',  scale:0.60}, {type:'nerv',    pos:' -7.5  4.8 -13',  scale:0.60},
-  {type:'stress',  pos:'  3.5  5.3 -14',  scale:0.54}, {type:'stress',  pos:' -3.5  5.3 -14',  scale:0.54},
-  {type:'anx',     pos:' 11.5  4.6 -14',  scale:0.58}, {type:'anx',     pos:'-11.5  4.6 -14',  scale:0.58},
-
-  {type:'stress',  pos:'  6.0  6.0 -15.5',scale:0.50}, {type:'stress',  pos:' -6.0  6.0 -15.5',scale:0.50},
-  {type:'nerv',    pos:'  9.0  5.7 -16',  scale:0.46}, {type:'nerv',    pos:' -9.0  5.7 -16',  scale:0.46},
-  {type:'anx',     pos:'  0.0  6.2 -16',  scale:0.80}, // гигант в небе
-  {type:'anx',     pos:'  3.0  5.9 -15',  scale:0.48}, {type:'anx',     pos:' -3.0  5.9 -15',  scale:0.48}
-];
     document.getElementById('startGameBtn')?.addEventListener('click', startGame);
     document.getElementById('playAgainBtn')?.addEventListener('click', () => location.reload());
 
@@ -172,56 +175,14 @@ const positions = [
       scores.nerv = scores.anx = scores.stress = 0;
       updateMiniProgress();
       modelsGroup.innerHTML = '';
+
       gameActive = true;
 
-      positions.forEach(item => {
-        const wrapper = document.createElement('a-entity');
-        wrapper.classList.add('clickable');
-        wrapper.setAttribute('position', item.pos);
-        wrapper.setAttribute('scale', `${item.scale} ${item.scale} ${item.scale}`);
-
-        const model = document.createElement('a-entity');
-        model.setAttribute('gltf-model', `#${item.type}`);
-        wrapper.appendChild(model);
-
-        const explosion = document.createElement('a-entity');
-        explosion.setAttribute('gltf-model', '#destruction');
-        explosion.setAttribute('visible', 'false');
-        explosion.setAttribute('scale', '0.01 0.01 0.01');
-        wrapper.appendChild(explosion);
-
-        model.addEventListener('model-loaded', () => {
-          const tick = () => {
-            if (!wrapper.isConnected) return;
-            wrapper.object3D.lookAt(sceneEl.camera.el.object3D.position);
-            wrapper.object3D.rotateY(Math.PI);
-            requestAnimationFrame(tick);
-          };
-          tick();
-        });
-
-        wrapper.addEventListener('click', function hit() {
-          if (!gameActive) return;
-          wrapper.removeEventListener('click', hit);
-          scores[item.type]++;
-          updateMiniProgress();
-
-          model.setAttribute('visible', 'false');
-          explosion.setAttribute('visible', 'true');
-          explosion.setAttribute('animation', `property:scale;to:${item.scale*7} ${item.scale*7} ${item.scale*7};dur:600;easing:easeOutCubic`);
-
-          const sound = document.createElement('a-entity');
-          sound.setAttribute('sound', 'src:#hit-sound;autoplay:true;volume:1');
-          wrapper.appendChild(sound);
-
-          setTimeout(() => wrapper.remove(), 1000);
-        });
-
-        modelsGroup.appendChild(wrapper);
-      });
+      modelsData.forEach(createModel);
 
       let timeLeft = 30;
       document.getElementById('timer').textContent = '30';
+
       gameTimer = setInterval(() => {
         timeLeft--;
         document.getElementById('timer').textContent = timeLeft;
@@ -230,8 +191,8 @@ const positions = [
     }
 
     function updateMiniProgress() {
-      document.getElementById('nerv-fill').style.width   = Math.min(scores.nerv   * 10, 100) + '%';
-      document.getElementById('anx-fill').style.width    = Math.min(scores.anx    * 10, 100) + '%';
+      document.getElementById('nerv-fill').style.width = Math.min(scores.nerv * 10, 100) + '%';
+      document.getElementById('anx-fill').style.width = Math.min(scores.anx * 10, 100) + '%';
       document.getElementById('stress-fill').style.width = Math.min(scores.stress * 10, 100) + '%';
     }
 
@@ -242,21 +203,85 @@ const positions = [
         document.getElementById('gameUI').style.display = 'none';
         document.getElementById('endScreen').style.display = 'flex';
 
-        // Финальные прогресс-бары — теперь точно работают!
-        const updateEndBar = (id, value) => {
-          const fill = document.getElementById(id);
-          fill.style.width = Math.min(value * 10, 100) + '%';
-          fill.textContent = value;
+        const show = (id, val) => {
+          const bar = document.getElementById(id);
+          bar.style.width = Math.min(val * 10, 100) + '%';
+          bar.textContent = val;
         };
-        updateEndBar('end-nerv-fill', scores.nerv);
-        updateEndBar('end-anx-fill', scores.anx);
-        updateEndBar('end-stress-fill', scores.stress);
+        show('end-nerv-fill', scores.nerv);
+        show('end-anx-fill', scores.anx);
+        show('end-stress-fill', scores.stress);
       }, 800);
+    }
+
+    function createModel(data) {
+      if (!gameActive) return;
+
+      const wrapper = document.createElement('a-entity');
+      wrapper.classList.add('clickable');
+      wrapper.setAttribute('position', data.pos);
+      wrapper.setAttribute('scale', `${data.scale} ${data.scale} ${data.scale}`);
+
+      const model = document.createElement('a-entity');
+      model.setAttribute('gltf-model', `#${data.type}`);
+      wrapper.appendChild(model);
+
+      const explosion = document.createElement('a-entity');
+      explosion.setAttribute('gltf-model', '#destruction');
+      explosion.setAttribute('visible', 'false');
+      explosion.setAttribute('scale', '0.01 0.01 0.01');
+      wrapper.appendChild(explosion);
+
+      wrapper.addEventListener('model-loaded', () => {
+        const tick = () => {
+          if (!wrapper.isConnected) return;
+          wrapper.object3D.lookAt(sceneEl.camera.el.object3D.position);
+          wrapper.object3D.rotateY(Math.PI);
+          requestAnimationFrame(tick);
+        };
+        tick();
+      });
+
+      wrapper.addEventListener('click', function hit() {
+        if (!gameActive) return;
+        wrapper.removeEventListener('click', hit);
+
+        scores[data.type]++;
+        updateMiniProgress();
+
+        model.setAttribute('visible', 'false');
+        explosion.setAttribute('visible', 'true');
+
+        // САМЫЙ КРАСИВЫЙ ВЗРЫВ 2025 ГОДА
+        explosion.setAttribute('animation__scale', {
+          property: 'scale',
+          to: `${data.scale*7} ${data.scale*7} ${data.scale*7}`,
+          dur: 600,
+          easing: 'easeOutExpo'
+        });
+        explosion.setAttribute('animation__up', {
+          property: 'position.y',
+          to: '+=2.5',
+          dur: 800,
+          easing: 'easeOutQuad'
+        });
+        explosion.setAttribute('animation__fade', {
+          property: 'material.opacity',
+          from: 1,
+          to: 0,
+          dur: 900,
+          easing: 'linear'
+        });
+
+        const sound = document.createElement('a-entity');
+        sound.setAttribute('sound', 'src:#hit-sound;autoplay:true;volume:1');
+        wrapper.appendChild(sound);
+
+        setTimeout(() => wrapper.remove(), 1000);
+      });
+
+      modelsGroup.appendChild(wrapper);
     }
   </script>
 </body>
 </html>
-
-
-
-
