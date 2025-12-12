@@ -1,42 +1,45 @@
 <!DOCTYPE html>
-<html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
-<script src="https://aframe.io/releases/1.6.0/aframe.min.js"></script>
-<script src="https://raw.githack.com/AR-js-org/AR.js/3.4.7/aframe/build/aframe-ar-nft.js"></script>
-</head><body style="margin:0;overflow:hidden">
-<a-scene embedded arjs="sourceType:webcam;trackingMethod:best">
-  <a-box position="0 1 -3" color="#e74c3c" depth="1" height="1" width="1" class="clickable"></a-box>
-
-  <a-camera>
-    <a-cursor></a-cursor>
-  </a-camera>
-</a-scene>
-
+<html><head><meta charset="utf-8">
+<script src="https://unpkg.com/three@0.164/examples/js/loaders/GLTFLoader.js"></script>
+<script src="https://unpkg.com/three@0.164/examples/js/controls/OrbitControls.js"></script>
+</head><body style="margin:0">
+<div id="container"></div>
 <script>
-AFRAME.registerComponent('boom', {
-  init: function () {
-    this.el.addEventListener('click', () => {
-      const pos = this.el.getAttribute('position');
-      const sound = document.createElement('a-entity');
-      sound.setAttribute('sound', 'src: https://assets.codepen.io/605876/sfx-hit.mp3; autoplay: true');
-      this.el.sceneEl.appendChild(sound);
+  import * as THREE from 'https://unpkg.com/three@0.164/build/three.module.js';
+  import {GLTFLoader} from 'https://unpkg.com/three@0.164/examples/jsm/loaders/GLTFLoader.js';
+  import {OrbitControls} from 'https://unpkg.com/three@0.164/examples/jsm/controls/OrbitControls.js';
 
-      for(let i=0;i<30;i++){
-        const p = document.createElement('a-sphere');
-        p.setAttribute('radius', 0.05 + Math.random()*0.1);
-        p.setAttribute('color', ['#ff0000','#ff8800','#ffff00'][Math.floor(Math.random()*3)]);
-        p.setAttribute('position', pos);
-        p.setAttribute('animation__scale', `property:scale;from:0.1 0.1 0.1;to:${2+Math.random()*3} ${2+Math.random()*3} ${2+Math.random()*3};dur:800;easing:easeOutCubic`);
-        p.setAttribute('animation__move', `property:position;to:${(Math.random()-0.5)*6} ${Math.random()*4+1} ${(Math.random()-0.5)*6};dur:1000;easing:easeOutQuad`);
-        p.setAttribute('animation__fade', `property:material.opacity;from:1;to:0;dur:1000`);
-        p.setAttribute('material', 'transparent:true;opacity:1');
-        this.el.sceneEl.appendChild(p);
-        setTimeout(()=>p.remove(),1200);
-      }
-      this.el.setAttribute('visible', false);
-    });
-  }
-});
+  const scene = new THREE.Scene();
+  scene.background = new THREE.Color(0x111111);
+  const camera = new THREE.PerspectiveCamera(60, innerWidth/innerHeight, 0.1, 100);
+  camera.position.set(0,1,4);
+  const renderer = new THREE.WebGLRenderer({antialias:true});
+  renderer.setSize(innerWidth,innerHeight);
+  document.getElementById('container').appendChild(renderer.domElement);
+  const controls = new OrbitControls(camera, renderer.domElement);
+
+  const light = new THREE.DirectionalLight(0xffffff, 2);
+  light.position.set(5,5,5);
+  scene.add(light);
+  scene.add(new THREE.AmbientLight(0xffffff, 0.5));
+
+  const loader = new GLTFLoader();
+  loader.load('destruction.glb', gltf => {
+    const model = gltf.scene;
+    model.scale.set(2,2,2);
+    scene.add(model);
+
+    const mixer = new THREE.AnimationMixer(model);
+    const action = mixer.clipAction(gltf.animations[0]); // первая анимация
+    action.play();
+
+    const clock = new THREE.Clock();
+    function animate(){
+      requestAnimationFrame(animate);
+      mixer.update(clock.getDelta());
+      renderer.render(scene,camera);
+    }
+    animate();
+  });
 </script>
-
-<a-box position="0 1 -3" color="#e74c3c" boom></a-box>
 </body></html>
