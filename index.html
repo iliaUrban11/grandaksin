@@ -8,73 +8,37 @@
   <script src="https://raw.githack.com/AR-js-org/AR.js/3.4.7/aframe/build/aframe-ar-nft.js"></script>
   <style>
     *{margin:0;padding:0;box-sizing:border-box;}
-    body{
-      font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;
-      background:linear-gradient(135deg,#027ACA 0%,#00b894 100%);
-      overflow:hidden;height:100vh;color:white;
-    }
-    #startPage,#endScreen{
-      position:fixed;inset:0;z-index:2000;display:flex;flex-direction:column;
-      justify-content:center;align-items:center;text-align:center;padding:5vh 5vw;
-    }
+    body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:linear-gradient(135deg,#027ACA 0%,#00b894 100%);overflow:hidden;height:100vh;color:white;}
+    #startPage,#endScreen{position:fixed;inset:0;z-index:2000;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;padding:5vh 5vw;}
     #startPage{background:rgba(255,255,255,0.96);color:#027ACA;}
     #endScreen{background:rgba(2,122,202,0.98);color:white;display:none;}
     #logo{font-size:clamp(2.5rem,9vw,4.5rem);font-weight:900;margin-bottom:3vh;}
     #rules{font-size:clamp(1.1rem,4.5vw,1.6rem);line-height:1.6;margin:4vh 0;max-width:90%;}
-    button{
-      padding:16px 60px;background:#027ACA;color:white;font-size:clamp(1.4rem,5.5vw,1.9rem);
-      font-weight:bold;border:none;border-radius:50px;cursor:pointer;
-      box-shadow:0 10px 30px rgba(2,122,202,0.4);transition:0.3s;
-    }
+    button{padding:16px 60px;background:#027ACA;color:white;font-size:clamp(1.4rem,5.5vw,1.9rem);font-weight:bold;border:none;border-radius:50px;cursor:pointer;box-shadow:0 10px 30px rgba(2,122,202,0.4);transition:0.3s;}
     #playAgainBtn{background:white;color:#027ACA;}
     button:hover{transform:scale(1.08);}
-    #gameUI{
-      position:fixed;inset:0;z-index:1000;pointer-events:none;display:none;
-      padding:env(safe-area-inset-top,15px) 5vw 5vh 5vw;
-    }
-    #topInfo{
-      position:absolute;top:0;left:0;right:0;
-      background:rgba(255,255,255,0.95);color:#027ACA;
-      padding:16px 20px;text-align:center;
-      border-bottom-left-radius:22px;
-      box-shadow:0 8px 25px rgba(0,0,0,0.3);
-    }
+    #gameUI{position:fixed;inset:0;z-index:1000;pointer-events:none;display:none;padding:env(safe-area-inset-top,15px) 5vw 5vh 5vw;}
+    #topInfo{position:absolute;top:0;left:0;right:0;background:rgba(255,255,255,0.95);color:#027ACA;padding:16px 20px;text-align:center;border-bottom-left-radius:22px;box-shadow:0 8px 25px rgba(0,0,0,0.3);}
     #instruction{font-size:clamp(1.15rem,4.8vw,1.6rem);font-weight:700;line-height:1.4;margin-bottom:4px;}
     #timeInfo{font-size:clamp(0.9rem,3.6vw,1.2rem);font-weight:600;opacity:0.9;}
-    #progress{
-      position:absolute;bottom:6vh;left:5vw;right:5vw;
-      display:flex;gap:10px;height:12px;
-    }
+    #progress{position:absolute;bottom:6vh;left:5vw;right:5vw;display:flex;gap:10px;height:12px;}
     .mini-bar{flex:1;height:100%;background:rgba(255,255,255,0.25);border-radius:8px;overflow:hidden;}
     .mini-fill{height:100%;width:0%;transition:width 0.6s ease;}
-    #nerv-fill {background:#00859D;}
-    #anx-fill {background:#411D6B;}
-    #stress-fill {background:#EB4C24;}
+    #nerv-fill {background:#00859D;}#anx-fill {background:#411D6B;}#stress-fill {background:#EB4C24;}
     #endTitle{font-size:clamp(2.2rem,8vw,3.8rem);font-weight:900;margin-bottom:4vh;}
     #finalText{font-size:clamp(1.3rem,5vw,2rem);margin:4vh 0;}
-    #endProgress{
-      width:90vw;max-width:500px;display:flex;flex-direction:column;gap:20px;margin:5vh 0;
-    }
+    #endProgress{width:90vw;max-width:500px;display:flex;flex-direction:column;gap:20px;margin:5vh 0;}
     .end-row{display:flex;align-items:center;gap:16px;}
     .end-label{width:110px;text-align:left;font-size:clamp(1rem,4.4rem,1.4rem);font-weight:700;}
-    .end-bar{
-      flex:1;height:65px;background:rgba(255,255,255,0.22);border-radius:32px;
-      overflow:hidden;position:relative;box-shadow:inset 0 3px 15px rgba(0,0,0,0.4);
-    }
-    .end-fill{
-      height:100%;width:0%;display:flex;align-items:center;justify-content:flex-end;
-      padding-right:24px;font-size:1.8rem;font-weight:900;color:white;
-      text-shadow:2px 2px 8px black;transition:width 1.2s ease-out;
-    }
-    #end-nerv-fill {background:#00859D;}
-    #end-anx-fill {background:#411D6B;}
-    #end-stress-fill {background:#EB4C24;}
+    .end-bar{flex:1;height:65px;background:rgba(255,255,255,0.22);border-radius:32px;overflow:hidden;position:relative;box-shadow:inset 0 3px 15px rgba(0,0,0,0.4);}
+    .end-fill{height:100%;width:0%;display:flex;align-items:center;justify-content:flex-end;padding-right:24px;font-size:1.8rem;font-weight:900;color:white;text-shadow:2px 2px 8px black;transition:width 1.2s ease-out;}
+    #end-nerv-fill {background:#00859D;}#end-anx-fill {background:#411D6B;}#end-stress-fill {background:#EB4C24;}
   </style>
 </head>
 <body>
 
   <div id="startPage">
-    <div id="logo">ГРАНДАКСИН<br>ПРОТИВ V5</div>
+    <div id="logo">ГРАНДАКСИН<br>ПРОТИВ V3</div>
     <div id="rules">Совместите прицел с симптомом<br>и нажмите на экран<br><br>Уничтожьте как можно больше за 30 секунд!</div>
     <button id="startGameBtn">НАЧАТЬ ИГРУ</button>
   </div>
@@ -155,7 +119,7 @@
       {type:'stress',  pos:' 6.0 6.0 -15.5',scale:0.50},
       {type:'stress',  pos:' -6.0 6.0 -15.5',scale:0.50},
       {type:'nerv',    pos:' 9.0 5.7 -16',  scale:0.46},
-      {type:'n',    pos:' -9.0 5.7 -16',  scale:0.46},
+      {type:'nerv',    pos:' -9.0 5.7 -16',  scale:0.46},
       {type:'anx',     pos:' 0.0 6.2 -16',  scale:0.80},
       {type:'anx',     pos:' 3.0 5.9 -15',  scale:0.48},
       {type:'anx',     pos:' -3.0 5.9 -15',  scale:0.48},
@@ -228,10 +192,12 @@
       const explosion = document.createElement('a-entity');
       explosion.setAttribute('gltf-model', '#destruction');
       explosion.setAttribute('visible', 'false');
-      explosion.setAttribute('scale', `${data.scale} ${data.scale} ${data.scale}`); // тот же размер
-      explosion.setAttribute('animation-mixer', 'clip: 1. Destrucción; loop: once; clampWhenFinished: true');
+      explosion.setAttribute('scale', `${data.scale} ${data.scale} ${data.scale}`);
+      // ВОТ ЭТО ГЛАВНОЕ — ЗАПУСКАЕТ ТВОЮ АНИМАЦИЮ "1. Destrucción"
+      explosion.setAttribute('animation-mixer', 'clip: 1. Destrucción; loop: once; clampWhenFinished: true; timeScale: 1');
       wrapper.appendChild(explosion);
 
+      // Билборд
       wrapper.addEventListener('model-loaded', () => {
         const tick = () => {
           if (!wrapper.isConnected) return;
@@ -242,6 +208,7 @@
         tick();
       });
 
+      // Попадание
       wrapper.addEventListener('click', function hit() {
         if (!gameActive) return;
         wrapper.removeEventListener('click', hit);
@@ -252,11 +219,13 @@
         model.setAttribute('visible', 'false');
         explosion.setAttribute('visible', 'true');
 
+        // Звук
         const sound = document.createElement('a-entity');
         sound.setAttribute('sound', 'src:#hit-sound;autoplay:true;volume:1');
         wrapper.appendChild(sound);
 
-        setTimeout(() => wrapper.remove(), 2000); // даём анимации доиграть
+        // Удаляем через 2 секунды (время на анимацию)
+        setTimeout(() => wrapper.remove(), 2000);
       });
 
       modelsGroup.appendChild(wrapper);
