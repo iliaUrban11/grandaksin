@@ -2,59 +2,22 @@
 <html>
 <head>
   <meta charset="utf-8">
-  <title>Three.js тест</title>
-  <style>body{margin:0;background:#000;overflow:hidden}</style>
+  <script src="https://aframe.io/releases/1.6.0/aframe.min.js"></script>
 </head>
 <body>
-<script type="module">
-import * as THREE from 'https://unpkg.com/three@0.164.0/build/three.module.js';
-import {GLTFLoader} from 'https://unpkg.com/three@0.164.0/examples/jsm/loaders/GLTFLoader.js';
-import {OrbitControls} from 'https://unpkg.com/three@0.164.0/examples/jsm/controls/OrbitControls.js';
+  <a-scene background="color:#000">
+    <a-assets>
+      <a-asset-item id="boom" src="destruction.glb"></a-asset-item>
+    </a-assets>
 
-const scene = new THREE.Scene();
-scene.background = new THREE.Color(0x111111);
-const camera = new THREE.PerspectiveCamera(60, innerWidth/innerHeight, 0.1, 100);
-camera.position.set(0,1,5);
+    <a-entity 
+      gltf-model="#boom"
+      position="0 0 -3"
+      scale="3 3 3"
+      animation-mixer="clip: *; loop: repeat">
+    </a-entity>
 
-const renderer = new THREE.WebGLRenderer({antialias:true});
-renderer.setSize(innerWidth, innerHeight);
-document.body.appendChild(renderer.domElement);
-
-const controls = new OrbitControls(camera, renderer.domElement);
-
-scene.add(new THREE.AmbientLight(0xffffff, 1));
-const light = new THREE.DirectionalLight(0xffffff, 2);
-light.position.set(5,10,7);
-scene.add(light);
-
-const loader = new GLTFLoader();
-loader.load('destruction.glb', (gltf) => {
-  const model = gltf.scene;
-  model.scale.set(2,2,2);
-  scene.add(model);
-
-  if (gltf.animations && gltf.animations.length > 0) {
-    const mixer = new THREE.AnimationMixer(model);
-    gltf.animations.forEach(clip => {
-      mixer.clipAction(clip).play();
-    });
-    const clock = new THREE.Clock();
-    function animate() {
-      requestAnimationFrame(animate);
-      mixer.update(clock.getDelta());
-      renderer.render(scene, camera);
-    }
-    animate();
-  } else {
-    alert('В glb нет анимаций!');
-  }
-}, undefined, err => console.error(err));
-
-function animate() {
-  requestAnimationFrame(animate);
-  renderer.render(scene, camera);
-}
-animate();
-</script>
+    <a-camera position="0 1.6 3"></a-camera>
+  </a-scene>
 </body>
 </html>
