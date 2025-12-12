@@ -37,7 +37,7 @@
       background:rgba(255,255,255,0.95);color:#027ACA;
       padding:16px 20px;text-align:center;
       border-bottom-left-radius:22px;
-      box-shadow:0 0 8px 25px rgba(0,0,0,0.3);
+      box-shadow:0 8px 25px rgba(0,0,0,0.3);
     }
     #instruction{font-size:clamp(1.15rem,4.8vw,1.6rem);font-weight:700;line-height:1.4;margin-bottom:4px;}
     #timeInfo{font-size:clamp(0.9rem,3.6vw,1.2rem);font-weight:600;opacity:0.9;}
@@ -74,7 +74,7 @@
 <body>
 
   <div id="startPage">
-    <div id="logo">ГРАНДАКСИН<br>ПРОТИВ V4</div>
+    <div id="logo">ГРАНДАКСИН<br>ПРОТИВ V5</div>
     <div id="rules">Совместите прицел с симптомом<br>и нажмите на экран<br><br>Уничтожьте как можно больше за 30 секунд!</div>
     <button id="startGameBtn">НАЧАТЬ ИГРУ</button>
   </div>
@@ -130,7 +130,6 @@
     let gameActive = false;
     let gameTimer;
 
-    // 30 фиксированных моделей — красиво, без пересечений, 160° поле зрения
     const modelsData = [
       {type:'nerv',    pos:' 4.5 0.5 -6',   scale:0.70},
       {type:'anx',     pos:' -4.5 0.6 -6',  scale:0.68},
@@ -156,7 +155,7 @@
       {type:'stress',  pos:' 6.0 6.0 -15.5',scale:0.50},
       {type:'stress',  pos:' -6.0 6.0 -15.5',scale:0.50},
       {type:'nerv',    pos:' 9.0 5.7 -16',  scale:0.46},
-      {type:'nerv',    pos:' -9.0 5.7 -16',  scale:0.46},
+      {type:'n',    pos:' -9.0 5.7 -16',  scale:0.46},
       {type:'anx',     pos:' 0.0 6.2 -16',  scale:0.80},
       {type:'anx',     pos:' 3.0 5.9 -15',  scale:0.48},
       {type:'anx',     pos:' -3.0 5.9 -15',  scale:0.48},
@@ -229,7 +228,8 @@
       const explosion = document.createElement('a-entity');
       explosion.setAttribute('gltf-model', '#destruction');
       explosion.setAttribute('visible', 'false');
-      explosion.setAttribute('scale', '0.01 0.01 0.01');
+      explosion.setAttribute('scale', `${data.scale} ${data.scale} ${data.scale}`); // тот же размер
+      explosion.setAttribute('animation-mixer', 'clip: 1. Destrucción; loop: once; clampWhenFinished: true');
       wrapper.appendChild(explosion);
 
       wrapper.addEventListener('model-loaded', () => {
@@ -252,32 +252,11 @@
         model.setAttribute('visible', 'false');
         explosion.setAttribute('visible', 'true');
 
-        // САМЫЙ КРАСИВЫЙ ВЗРЫВ 2025 ГОДА
-        explosion.setAttribute('animation__scale', {
-          property: 'scale',
-          to: `${data.scale*7} ${data.scale*7} ${data.scale*7}`,
-          dur: 600,
-          easing: 'easeOutExpo'
-        });
-        explosion.setAttribute('animation__up', {
-          property: 'position.y',
-          to: '+=2.5',
-          dur: 800,
-          easing: 'easeOutQuad'
-        });
-        explosion.setAttribute('animation__fade', {
-          property: 'material.opacity',
-          from: 1,
-          to: 0,
-          dur: 900,
-          easing: 'linear'
-        });
-
         const sound = document.createElement('a-entity');
         sound.setAttribute('sound', 'src:#hit-sound;autoplay:true;volume:1');
         wrapper.appendChild(sound);
 
-        setTimeout(() => wrapper.remove(), 1000);
+        setTimeout(() => wrapper.remove(), 2000); // даём анимации доиграть
       });
 
       modelsGroup.appendChild(wrapper);
@@ -285,4 +264,3 @@
   </script>
 </body>
 </html>
-
