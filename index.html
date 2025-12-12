@@ -1,45 +1,60 @@
 <!DOCTYPE html>
-<html><head><meta charset="utf-8">
-<script src="https://unpkg.com/three@0.164/examples/js/loaders/GLTFLoader.js"></script>
-<script src="https://unpkg.com/three@0.164/examples/js/controls/OrbitControls.js"></script>
-</head><body style="margin:0">
-<div id="container"></div>
-<script>
-  import * as THREE from 'https://unpkg.com/three@0.164/build/three.module.js';
-  import {GLTFLoader} from 'https://unpkg.com/three@0.164/examples/jsm/loaders/GLTFLoader.js';
-  import {OrbitControls} from 'https://unpkg.com/three@0.164/examples/jsm/controls/OrbitControls.js';
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Three.js тест</title>
+  <style>body{margin:0;background:#000;overflow:hidden}</style>
+</head>
+<body>
+<script type="module">
+import * as THREE from 'https://unpkg.com/three@0.164.0/build/three.module.js';
+import {GLTFLoader} from 'https://unpkg.com/three@0.164.0/examples/jsm/loaders/GLTFLoader.js';
+import {OrbitControls} from 'https://unpkg.com/three@0.164.0/examples/jsm/controls/OrbitControls.js';
 
-  const scene = new THREE.Scene();
-  scene.background = new THREE.Color(0x111111);
-  const camera = new THREE.PerspectiveCamera(60, innerWidth/innerHeight, 0.1, 100);
-  camera.position.set(0,1,4);
-  const renderer = new THREE.WebGLRenderer({antialias:true});
-  renderer.setSize(innerWidth,innerHeight);
-  document.getElementById('container').appendChild(renderer.domElement);
-  const controls = new OrbitControls(camera, renderer.domElement);
+const scene = new THREE.Scene();
+scene.background = new THREE.Color(0x111111);
+const camera = new THREE.PerspectiveCamera(60, innerWidth/innerHeight, 0.1, 100);
+camera.position.set(0,1,5);
 
-  const light = new THREE.DirectionalLight(0xffffff, 2);
-  light.position.set(5,5,5);
-  scene.add(light);
-  scene.add(new THREE.AmbientLight(0xffffff, 0.5));
+const renderer = new THREE.WebGLRenderer({antialias:true});
+renderer.setSize(innerWidth, innerHeight);
+document.body.appendChild(renderer.domElement);
 
-  const loader = new GLTFLoader();
-  loader.load('destruction.glb', gltf => {
-    const model = gltf.scene;
-    model.scale.set(2,2,2);
-    scene.add(model);
+const controls = new OrbitControls(camera, renderer.domElement);
 
+scene.add(new THREE.AmbientLight(0xffffff, 1));
+const light = new THREE.DirectionalLight(0xffffff, 2);
+light.position.set(5,10,7);
+scene.add(light);
+
+const loader = new GLTFLoader();
+loader.load('destruction.glb', (gltf) => {
+  const model = gltf.scene;
+  model.scale.set(2,2,2);
+  scene.add(model);
+
+  if (gltf.animations && gltf.animations.length > 0) {
     const mixer = new THREE.AnimationMixer(model);
-    const action = mixer.clipAction(gltf.animations[0]); // первая анимация
-    action.play();
-
+    gltf.animations.forEach(clip => {
+      mixer.clipAction(clip).play();
+    });
     const clock = new THREE.Clock();
-    function animate(){
+    function animate() {
       requestAnimationFrame(animate);
       mixer.update(clock.getDelta());
-      renderer.render(scene,camera);
+      renderer.render(scene, camera);
     }
     animate();
-  });
+  } else {
+    alert('В glb нет анимаций!');
+  }
+}, undefined, err => console.error(err));
+
+function animate() {
+  requestAnimationFrame(animate);
+  renderer.render(scene, camera);
+}
+animate();
 </script>
-</body></html>
+</body>
+</html>
