@@ -3,18 +3,21 @@
 <script src="https://aframe.io/releases/1.6.0/aframe.min.js"></script>
 <script src="https://raw.githack.com/AR-js-org/AR.js/3.4.7/aframe/build/aframe-ar-nft.js"></script>
 </head><body style="margin:0;overflow:hidden">
-<a-scene embedded arjs="sourceType:webcam;trackingMethod:best;debugUIEnabled:false" vr-mode-ui="enabled:false" renderer="antialias:true">
+<a-scene embedded arjs="sourceType:webcam;trackingMethod:best;debugUIEnabled:false" cursor="rayOrigin:mouse" raycaster="objects:.clickable">
   <a-assets>
     <a-asset-item id="boom" src="destruction.glb"></a-asset-item>
   </a-assets>
 
-  <a-box position="0 0.5 -3" color="#333" depth="2" height="2" width="2" class="clickable"></a-box>
+  <a-box position="0 1 -3" color="#f39c12" depth="1.5" height="1.5" width="1.5" class="clickable"
+    onclick="this.setAttribute('visible','false');document.querySelector('#expl').setAttribute('visible','true')">
+  </a-box>
 
-  <a-entity position="0 1 -3" gltf-model="#boom"
-    animation-mixer="clip: 1. Destrucción; loop: repeat; clampWhenFinished: false; timeScale: 1"
-    visible="true">
+  <a-entity id="expl" position="0 1 -3" gltf-model="#boom" visible="false"
+    animation-mixer="clip: 1. Destrucción; loop: once; clampWhenFinished: true">
   </a-entity>
 
-  <a-camera></a-camera>
+  <a-camera>
+    <a-cursor></a-cursor>
+  </a-camera>
 </a-scene>
 </body></html>
