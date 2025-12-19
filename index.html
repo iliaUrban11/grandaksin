@@ -160,13 +160,12 @@
         model.setAttribute('gltf-model', `#${item.type}`);
         wrapper.appendChild(model);
 
-        // PNG-взрыв
         const explosion = document.createElement('a-plane');
         explosion.setAttribute('src', '#explosion-img');
         explosion.setAttribute('transparent', 'true');
         explosion.setAttribute('visible', 'false');
         explosion.setAttribute('scale', '0.01 0.01 0.01');
-        explosion.setAttribute('look-at', '[camera]'); // всегда лицом к игроку
+        explosion.setAttribute('look-at', '[camera]');
         wrapper.appendChild(explosion);
 
         model.addEventListener('model-loaded', () => {
@@ -188,21 +187,21 @@
           model.setAttribute('visible', 'false');
           explosion.setAttribute('visible', 'true');
 
-          // Увеличение
-          explosion.setAttribute('animation__scale', `property:scale;to:${item.scale*6} ${item.scale*6} ${item.scale*6};dur:600;easing:easeOutExpo`);
+          // Плавное увеличение
+          explosion.setAttribute('animation__scale', `property:scale;to:${item.scale*6} ${item.scale*6} ${item.scale*6};dur:800;easing:easeOutExpo`);
 
-          // Вращение вокруг своей оси (фронтально к игроку)
-          explosion.setAttribute('animation__spin', `property:rotation;to:0 0 180;loop:true;dur:1200;easing:linear`);
+          // Вращение по оси Y — правильно (X Y Z = 0 360 0)
+          explosion.setAttribute('animation__spin', `property:rotation;from:0 0 0;to:0 360 0;loop:true;dur:1200;easing:linear`);
 
-          // Затухание
-          explosion.setAttribute('animation__fade', `property:material.opacity;from:1;to:0;dur:800;delay:400;easing:linear`);
+          // Плавное затухание
+          explosion.setAttribute('animation__fade', `property:material.opacity;from:1;to:0;dur:1000;delay:600;easing:easeOutQuad`);
 
           // Звук
           const sound = document.createElement('a-entity');
           sound.setAttribute('sound', 'src:#hit-sound;autoplay:true;volume:1');
           wrapper.appendChild(sound);
 
-          setTimeout(() => wrapper.remove(), 1400);
+          setTimeout(() => wrapper.remove(), 1800);
         });
 
         modelsGroup.appendChild(wrapper);
@@ -242,6 +241,3 @@
   </script>
 </body>
 </html>
-
-
-
