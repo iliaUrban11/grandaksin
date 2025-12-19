@@ -160,13 +160,12 @@
         model.setAttribute('gltf-model', `#${item.type}`);
         wrapper.appendChild(model);
 
-        // PNG-взрыв
         const explosion = document.createElement('a-plane');
         explosion.setAttribute('src', '#explosion-img');
         explosion.setAttribute('transparent', 'true');
         explosion.setAttribute('visible', 'false');
-        explosion.setAttribute('scale', '0.1 0.1 0.1');
-        explosion.setAttribute('look-at', '[camera]'); // всегда лицом к игроку
+        explosion.setAttribute('scale', '0.01 0.01 0.01');
+        explosion.setAttribute('look-at', '[camera]');
         wrapper.appendChild(explosion);
 
         model.addEventListener('model-loaded', () => {
@@ -188,16 +187,18 @@
           model.setAttribute('visible', 'false');
           explosion.setAttribute('visible', 'true');
 
-          // Плавное увеличение (очень красиво)
-          explosion.setAttribute('animation', `property:scale;from:0.1 0.1 0.1;to:${item.scale*8} ${item.scale*8} ${item.scale*8};dur:1200;easing:easeOutElastic`);
+          // Плавное увеличение
+          explosion.setAttribute('animation__scale', `property:scale;to:${item.scale*6} ${item.scale*6} ${item.scale*6};dur:800;easing:easeOutCubic`);
+
+          // Плавное затухание
+          explosion.setAttribute('animation__fade', `property:material.opacity;from:1;to:0;dur:1000;delay:600;easing:easeOutQuad`);
 
           // Звук
           const sound = document.createElement('a-entity');
           sound.setAttribute('sound', 'src:#hit-sound;autoplay:true;volume:1');
           wrapper.appendChild(sound);
 
-          // Удаляем через 1.5 сек (чтобы успело увеличиться)
-          setTimeout(() => wrapper.remove(), 1500);
+          setTimeout(() => wrapper.remove(), 1800);
         });
 
         modelsGroup.appendChild(wrapper);
