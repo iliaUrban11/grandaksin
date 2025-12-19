@@ -73,7 +73,7 @@
 </head>
 <body>
   <div id="startPage">
-    <div id="logo">ГРАНДАКСИН<br>ПРОТИВ V4</div>
+    <div id="logo">ГРАНДАКСИН<br>ПРОТИВ V3</div>
     <div id="rules">Совместите прицел с симптомом<br>и нажмите на экран<br><br>Уничтожьте как можно больше за 30 секунд!</div>
     <button id="startGameBtn">НАЧАТЬ ИГРУ</button>
   </div>
@@ -99,7 +99,7 @@
     <button id="playAgainBtn">ИГРАТЬ ЕЩЁ РАЗ</button>
   </div>
   <a-scene embedded arjs="trackingMethod:best;sourceType:webcam;debugUIEnabled:false"
-           renderer="antialias:true;alpha:true;logarithmicDepthBuffer:true" vr-mode-ui="enabled:false" device-orientation-permission-ui="enabled:false"
+           renderer="antialias:true" vr-mode-ui="enabled:false" device-orientation-permission-ui="enabled:false"
            style="display:none" raycaster="objects:.clickable" cursor="rayOrigin:mouse">
     <a-assets timeout="120000">
       <img id="red-img" src="red.png">
@@ -160,12 +160,7 @@
       positions.forEach(item => {
         const wrapper = document.createElement('a-entity');
         wrapper.classList.add('clickable');
-
-        // Парсим Z из позиции (например, "-6" из "4.5 0.5 -6")
-        const z = parseFloat(item.pos.split(' ')[2]);
-        // Добавляем небольшое смещение по Z в зависимости от расстояния
-        const zOffset = z * 0.02; // чем дальше — тем больше смещение
-        wrapper.setAttribute('position', item.pos + ` 0 0 ${zOffset}`);
+        wrapper.setAttribute('position', item.pos);
 
         const modelScale = item.scale * 3; // в 3 раза больше
         wrapper.setAttribute('scale', `${modelScale} ${modelScale} ${modelScale}`);
@@ -174,15 +169,18 @@
         model.setAttribute('src', `#${typeToImg[item.type]}`);
         model.setAttribute('transparent', 'true');
         model.setAttribute('look-at', '[camera]');
+        // Ключевой фикс — правильный материал для прозрачности
+        model.setAttribute('material', 'shader:flat; depthTest:true; depthWrite:false');
         wrapper.appendChild(model);
 
         const explosion = document.createElement('a-plane');
         explosion.setAttribute('src', '#explosion-img');
         explosion.setAttribute('transparent', 'true');
         explosion.setAttribute('visible', 'false');
-        explosion.setAttribute('position', '0 0 -0.05'); // взрыв ближе к камере
         explosion.setAttribute('scale', '0.1 0.1 0.1');
         explosion.setAttribute('look-at', '[camera]');
+        explosion.setAttribute('material', 'shader:flat; depthTest:true; depthWrite:false');
+        explosion.setAttribute('position', '0 0 -0.02'); // чуть ближе, чтобы был поверх
         wrapper.appendChild(explosion);
 
         wrapper.addEventListener('click', function hit() {
