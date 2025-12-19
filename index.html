@@ -165,7 +165,7 @@
         explosion.setAttribute('transparent', 'true');
         explosion.setAttribute('visible', 'false');
         explosion.setAttribute('scale', '0.1 0.1 0.1');
-        explosion.setAttribute('look-at', '[camera]'); // всегда лицом к игроку
+        explosion.setAttribute('look-at', '[camera]');
         wrapper.appendChild(explosion);
 
         model.addEventListener('model-loaded', () => {
@@ -188,17 +188,37 @@
           explosion.setAttribute('visible', 'true');
 
           // Очень плавное увеличение
-          explosion.setAttribute('animation__scale', `property:scale;from:0.1 0.1 0.1;to:${item.scale*8} ${item.scale*8} ${item.scale*8};dur:1400;easing:easeOutQuint`);
-
-          // Очень плавное исчезновение (прозрачность)
-          explosion.setAttribute('animation__fade', `property:material.opacity;from:1;to:0;dur:2000;delay:800;easing:easeOutQuad`);
+          explosion.emit('startScale');
+          explosion.emit('startFade');
 
           // Звук
           const sound = document.createElement('a-entity');
           sound.setAttribute('sound', 'src:#hit-sound;autoplay:true;volume:1');
           wrapper.appendChild(sound);
 
-          setTimeout(() => wrapper.remove(), 2800);
+          setTimeout(() => wrapper.remove(), 3000);
+        });
+
+        // Анимации через события (гарантированно работают)
+        explosion.addEventListener('startScale', () => {
+          explosion.setAttribute('animation', {
+            property: 'scale',
+            from: '0.1 0.1 0.1',
+            to: `${item.scale*8} ${item.scale*8} ${item.scale*8}`,
+            dur: 1400,
+            easing: 'easeOutQuint'
+          });
+        });
+
+        explosion.addEventListener('startFade', () => {
+          explosion.setAttribute('animation__fade', {
+            property: 'material.opacity',
+            from: 1,
+            to: 0,
+            dur: 2000,
+            delay: 800,
+            easing: 'easeOutQuad'
+          });
         });
 
         modelsGroup.appendChild(wrapper);
