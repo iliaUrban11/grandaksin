@@ -192,7 +192,7 @@
           explosion.setAttribute('animation__scale', `property:scale;to:${item.scale*6} ${item.scale*6} ${item.scale*6};dur:600;easing:easeOutExpo`);
 
           // Вращение вокруг своей оси (фронтально к игроку)
-          explosion.setAttribute('animation__spin', `property:rotation;to:0 360 0;loop:true;dur:1200;easing:linear`);
+          explosion.setAttribute('animation__spin', `property:rotation;to:360 0 0;loop:true;dur:1200;easing:linear`);
 
           // Затухание
           explosion.setAttribute('animation__fade', `property:material.opacity;from:1;to:0;dur:800;delay:400;easing:linear`);
@@ -242,3 +242,4 @@
   </script>
 </body>
 </html>
+
