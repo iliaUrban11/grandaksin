@@ -73,7 +73,7 @@
 </head>
 <body>
   <div id="startPage">
-    <div id="logo">ГРАНДАКСИН<br>ПРОТИВ V3</div>
+    <div id="logo">ГРАНДАКСИН<br>ПРОТИВ V7</div>
     <div id="rules">Совместите прицел с симптомом<br>и нажмите на экран<br><br>Уничтожьте как можно больше за 30 секунд!</div>
     <button id="startGameBtn">НАЧАТЬ ИГРУ</button>
   </div>
@@ -162,17 +162,18 @@
         wrapper.classList.add('clickable');
         wrapper.setAttribute('position', item.pos);
 
-        const modelScale = item.scale * 3; // в 3 раза больше
+        const modelScale = item.scale * 3; // симптом в 3 раза больше
         wrapper.setAttribute('scale', `${modelScale} ${modelScale} ${modelScale}`);
 
+        // Симптом — PNG, всегда смотрит на пользователя
         const model = document.createElement('a-plane');
         model.setAttribute('src', `#${typeToImg[item.type]}`);
         model.setAttribute('transparent', 'true');
         model.setAttribute('look-at', '[camera]');
-        // Ключевой фикс — правильный материал для прозрачности
         model.setAttribute('material', 'shader:flat; depthTest:true; depthWrite:false');
         wrapper.appendChild(model);
 
+        // Взрыв — PNG
         const explosion = document.createElement('a-plane');
         explosion.setAttribute('src', '#explosion-img');
         explosion.setAttribute('transparent', 'true');
@@ -180,7 +181,7 @@
         explosion.setAttribute('scale', '0.1 0.1 0.1');
         explosion.setAttribute('look-at', '[camera]');
         explosion.setAttribute('material', 'shader:flat; depthTest:true; depthWrite:false');
-        explosion.setAttribute('position', '0 0 -0.02'); // чуть ближе, чтобы был поверх
+        explosion.setAttribute('position', '0 0 -0.02'); // чуть ближе
         wrapper.appendChild(explosion);
 
         wrapper.addEventListener('click', function hit() {
@@ -192,10 +193,14 @@
           model.setAttribute('visible', 'false');
           explosion.setAttribute('visible', 'true');
 
-          explosion.setAttribute('animation__scale', `property:scale;to:${modelScale*2} ${modelScale*2} ${modelScale*2};dur:1000;easing:easeOutCubic`);
+          // Взрыв = 1.7 размера модели
+          const explosionFinalScale = modelScale * 1.7;
+          explosion.setAttribute('animation__scale', `property:scale;to:${explosionFinalScale} ${explosionFinalScale} ${explosionFinalScale};dur:1000;easing:easeOutCubic`);
 
+          // Плавное исчезновение
           explosion.setAttribute('animation__fade', `property:material.opacity;from:1;to:0;dur:1500;delay:500;easing:easeOutQuad`);
 
+          // Звук
           const sound = document.createElement('a-entity');
           sound.setAttribute('sound', 'src:#hit-sound;autoplay:true;volume:1');
           wrapper.appendChild(sound);
