@@ -73,7 +73,7 @@
 </head>
 <body>
   <div id="startPage">
-    <div id="logo">ГРАНДАКСИН<br>ПРОТИВ V4</div>
+    <div id="logo">ГРАНДАКСИН<br>ПРОТИВ V3</div>
     <div id="rules">Совместите прицел с симптомом<br>и нажмите на экран<br><br>Уничтожьте как можно больше за 30 секунд!</div>
     <button id="startGameBtn">НАЧАТЬ ИГРУ</button>
   </div>
@@ -190,8 +190,8 @@
           // Плавное увеличение
           explosion.setAttribute('animation__scale', `property:scale;from:0.1 0.1 0.1;to:${item.scale*7} ${item.scale*7} ${item.scale*7};dur:1000;easing:easeOutElastic`);
 
-          // Вращение только на 180° (чтобы не исчезала плоская сторона)
-          explosion.setAttribute('animation__spin', `property:rotation;from:0 0 0;to:0 180 0;dur:1000;easing:easeInOutSine`);
+          // ПОВОРОТ на 180° (один раз, плавно)
+          explosion.setAttribute('animation__flip', `property:rotation;from:0 0 0;to:0 180 0;dur:1000;easing:easeInOutSine`);
 
           // Плавное затухание
           explosion.setAttribute('animation__fade', `property:material.opacity;from:1;to:0;dur:1200;delay:600;easing:easeOutQuad`);
