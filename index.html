@@ -156,25 +156,28 @@
       updateMiniProgress();
       modelsGroup.innerHTML = '';
       gameActive = true;
+
       positions.forEach(item => {
         const wrapper = document.createElement('a-entity');
         wrapper.classList.add('clickable');
         wrapper.setAttribute('position', item.pos);
-        wrapper.setAttribute('scale', `${item.scale} ${item.scale} ${item.scale}`);
 
-        // Симптом — PNG картинка
+        // Симптомы — PNG, увеличены в 3 раза
+        const modelScale = item.scale * 3;
+        wrapper.setAttribute('scale', `${modelScale} ${modelScale} ${modelScale}`);
+
         const model = document.createElement('a-plane');
         model.setAttribute('src', `#${typeToImg[item.type]}`);
         model.setAttribute('transparent', 'true');
         model.setAttribute('look-at', '[camera]');
         wrapper.appendChild(model);
 
-        // Взрыв — PNG картинка
+        // Взрыв — PNG
         const explosion = document.createElement('a-plane');
         explosion.setAttribute('src', '#explosion-img');
         explosion.setAttribute('transparent', 'true');
         explosion.setAttribute('visible', 'false');
-        explosion.setAttribute('scale', '0.01 0.01 0.01');
+        explosion.setAttribute('scale', '0.1 0.1 0.1');
         explosion.setAttribute('look-at', '[camera]');
         wrapper.appendChild(explosion);
 
@@ -187,21 +190,18 @@
           model.setAttribute('visible', 'false');
           explosion.setAttribute('visible', 'true');
 
-          // Плавное увеличение
-          explosion.setAttribute('animation__scale', `property:scale;to:${item.scale*6} ${item.scale*6} ${item.scale*6};dur:800;easing:easeOutExpo`);
-
-          // Вращение по оси Y (вертикаль)
-          explosion.setAttribute('animation__spin', `property:rotation;from:0 0 0;to:0 360 0;loop:true;dur:1200;easing:linear`);
+          // Плавное увеличение взрыва
+          explosion.setAttribute('animation__scale', `property:scale;to:${modelScale*2} ${modelScale*2} ${modelScale*2};dur:1000;easing:easeOutCubic`);
 
           // Плавное затухание
-          explosion.setAttribute('animation__fade', `property:material.opacity;from:1;to:0;dur:1000;delay:600;easing:easeOutQuad`);
+          explosion.setAttribute('animation__fade', `property:material.opacity;from:1;to:0;dur:1500;delay:500;easing:easeOutQuad`);
 
           // Звук
           const sound = document.createElement('a-entity');
           sound.setAttribute('sound', 'src:#hit-sound;autoplay:true;volume:1');
           wrapper.appendChild(sound);
 
-          setTimeout(() => wrapper.remove(), 1800);
+          setTimeout(() => wrapper.remove(), 2000);
         });
 
         modelsGroup.appendChild(wrapper);
