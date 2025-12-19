@@ -156,21 +156,19 @@
         wrapper.setAttribute('position', item.pos);
         wrapper.setAttribute('scale', `${item.scale} ${item.scale} ${item.scale}`);
 
-        // Основная модель
         const model = document.createElement('a-entity');
         model.setAttribute('gltf-model', `#${item.type}`);
         wrapper.appendChild(model);
 
-        // Взрыв — PNG картинка
+        // PNG-взрыв
         const explosion = document.createElement('a-plane');
         explosion.setAttribute('src', '#explosion-img');
         explosion.setAttribute('transparent', 'true');
         explosion.setAttribute('visible', 'false');
         explosion.setAttribute('scale', '0.01 0.01 0.01');
-        explosion.setAttribute('rotation', '0 0 0');
+        explosion.setAttribute('look-at', '[camera]'); // всегда лицом к игроку
         wrapper.appendChild(explosion);
 
-        // Билборд для всей группы
         model.addEventListener('model-loaded', () => {
           const tick = () => {
             if (!wrapper.isConnected) return;
@@ -181,7 +179,6 @@
           tick();
         });
 
-        // Клик — ВЗРЫВ PNG
         wrapper.addEventListener('click', function hit() {
           if (!gameActive) return;
           wrapper.removeEventListener('click', hit);
@@ -191,21 +188,21 @@
           model.setAttribute('visible', 'false');
           explosion.setAttribute('visible', 'true');
 
-          // Анимация увеличения
+          // Увеличение
           explosion.setAttribute('animation__scale', `property:scale;to:${item.scale*6} ${item.scale*6} ${item.scale*6};dur:600;easing:easeOutExpo`);
 
-          // Анимация вращения
-          explosion.setAttribute('animation__rot', `property:rotation;to:0 360 0;loop:true;dur:1200;easing:linear`);
+          // Вращение вокруг своей оси (фронтально к игроку)
+          explosion.setAttribute('animation__spin', `property:rotation;to:0 360 0;loop:true;dur:1200;easing:linear`);
 
-          // Анимация затухания
-          explosion.setAttribute('animation__fade', `property:material.opacity;from:1;to:0;dur:800;startEvents:animationcomplete__scale`);
+          // Затухание
+          explosion.setAttribute('animation__fade', `property:material.opacity;from:1;to:0;dur:800;delay:400;easing:linear`);
 
           // Звук
           const sound = document.createElement('a-entity');
           sound.setAttribute('sound', 'src:#hit-sound;autoplay:true;volume:1');
           wrapper.appendChild(sound);
 
-          setTimeout(() => wrapper.remove(), 1200);
+          setTimeout(() => wrapper.remove(), 1400);
         });
 
         modelsGroup.appendChild(wrapper);
