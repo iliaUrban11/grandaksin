@@ -73,7 +73,7 @@
 </head>
 <body>
   <div id="startPage">
-    <div id="logo">ГРАНДАКСИН<br>ПРОТИВ V7</div>
+    <div id="logo">ГРАНДАКСИН<br>ПРОТИВ V3</div>
     <div id="rules">Совместите прицел с симптомом<br>и нажмите на экран<br><br>Уничтожьте как можно больше за 30 секунд!</div>
     <button id="startGameBtn">НАЧАТЬ ИГРУ</button>
   </div>
@@ -162,10 +162,10 @@
         wrapper.classList.add('clickable');
         wrapper.setAttribute('position', item.pos);
 
-        const modelScale = item.scale * 3; // симптом в 3 раза больше
+        const modelScale = item.scale * 3; // симптомы в 3 раза больше
         wrapper.setAttribute('scale', `${modelScale} ${modelScale} ${modelScale}`);
 
-        // Симптом — PNG, всегда смотрит на пользователя
+        // Симптом — PNG
         const model = document.createElement('a-plane');
         model.setAttribute('src', `#${typeToImg[item.type]}`);
         model.setAttribute('transparent', 'true');
@@ -181,7 +181,7 @@
         explosion.setAttribute('scale', '0.1 0.1 0.1');
         explosion.setAttribute('look-at', '[camera]');
         explosion.setAttribute('material', 'shader:flat; depthTest:true; depthWrite:false');
-        explosion.setAttribute('position', '0 0 -0.02'); // чуть ближе
+        explosion.setAttribute('position', '0 0 -0.02'); // чуть ближе к камере
         wrapper.appendChild(explosion);
 
         wrapper.addEventListener('click', function hit() {
@@ -193,8 +193,8 @@
           model.setAttribute('visible', 'false');
           explosion.setAttribute('visible', 'true');
 
-          // Взрыв = 1.7 размера модели
-          const explosionFinalScale = modelScale * 1.7;
+          // Взрыв = 1.3 размера модели
+          const explosionFinalScale = modelScale * 1.3;
           explosion.setAttribute('animation__scale', `property:scale;to:${explosionFinalScale} ${explosionFinalScale} ${explosionFinalScale};dur:1000;easing:easeOutCubic`);
 
           // Плавное исчезновение
