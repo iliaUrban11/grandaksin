@@ -166,7 +166,8 @@
         explosion.setAttribute('transparent', 'true');
         explosion.setAttribute('visible', 'false');
         explosion.setAttribute('scale', '0.01 0.01 0.01');
-        explosion.setAttribute('look-at', '[camera]'); // всегда лицом к игроку
+        // Всегда лицом к игроку
+        explosion.setAttribute('look-at', '[camera]');
         wrapper.appendChild(explosion);
 
         model.addEventListener('model-loaded', () => {
@@ -191,8 +192,8 @@
           // Увеличение
           explosion.setAttribute('animation__scale', `property:scale;to:${item.scale*6} ${item.scale*6} ${item.scale*6};dur:600;easing:easeOutExpo`);
 
-          // Вращение вокруг своей оси (фронтально к игроку)
-          explosion.setAttribute('animation__spin', `property:rotation;to:0 360 0;loop:true;dur:1200;easing:linear`);
+          // Вращение ПО ОСИ Y (вертикальной) — именно то, что ты хотел
+          explosion.setAttribute('animation__spin', `property:rotation;from:0 0 0;to:0 360 0;loop:true;dur:1200;easing:linear`);
 
           // Затухание
           explosion.setAttribute('animation__fade', `property:material.opacity;from:1;to:0;dur:800;delay:400;easing:linear`);
