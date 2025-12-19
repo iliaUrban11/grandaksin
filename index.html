@@ -73,7 +73,7 @@
 </head>
 <body>
   <div id="startPage">
-    <div id="logo">ГРАНДАКСИН<br>ПРОТИВ V3</div>
+    <div id="logo">ГРАНДАКСИН<br>ПРОТИВ V4</div>
     <div id="rules">Совместите прицел с симптомом<br>и нажмите на экран<br><br>Уничтожьте как можно больше за 30 секунд!</div>
     <button id="startGameBtn">НАЧАТЬ ИГРУ</button>
   </div>
@@ -160,13 +160,11 @@
         model.setAttribute('gltf-model', `#${item.type}`);
         wrapper.appendChild(model);
 
-        // PNG-взрыв
         const explosion = document.createElement('a-plane');
         explosion.setAttribute('src', '#explosion-img');
         explosion.setAttribute('transparent', 'true');
         explosion.setAttribute('visible', 'false');
         explosion.setAttribute('scale', '0.01 0.01 0.01');
-        // Всегда лицом к игроку
         explosion.setAttribute('look-at', '[camera]');
         wrapper.appendChild(explosion);
 
@@ -189,21 +187,21 @@
           model.setAttribute('visible', 'false');
           explosion.setAttribute('visible', 'true');
 
-          // Увеличение
-          explosion.setAttribute('animation__scale', `property:scale;to:${item.scale*6} ${item.scale*6} ${item.scale*6};dur:600;easing:easeOutExpo`);
+          // Плавное увеличение
+          explosion.setAttribute('animation__scale', `property:scale;from:0.1 0.1 0.1;to:${item.scale*7} ${item.scale*7} ${item.scale*7};dur:1000;easing:easeOutElastic`);
 
-          // Вращение ПО ОСИ Y (вертикальной) — именно то, что ты хотел
-          explosion.setAttribute('animation__spin', `property:rotation;from:0 0 0;to:0 360 0;loop:true;dur:1200;easing:linear`);
+          // Вращение только на 180° (чтобы не исчезала плоская сторона)
+          explosion.setAttribute('animation__spin', `property:rotation;from:0 0 0;to:0 180 0;dur:1000;easing:easeInOutSine`);
 
-          // Затухание
-          explosion.setAttribute('animation__fade', `property:material.opacity;from:1;to:0;dur:800;delay:400;easing:linear`);
+          // Плавное затухание
+          explosion.setAttribute('animation__fade', `property:material.opacity;from:1;to:0;dur:1200;delay:600;easing:easeOutQuad`);
 
           // Звук
           const sound = document.createElement('a-entity');
           sound.setAttribute('sound', 'src:#hit-sound;autoplay:true;volume:1');
           wrapper.appendChild(sound);
 
-          setTimeout(() => wrapper.remove(), 1400);
+          setTimeout(() => wrapper.remove(), 1800);
         });
 
         modelsGroup.appendChild(wrapper);
