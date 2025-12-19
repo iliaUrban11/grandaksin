@@ -102,9 +102,9 @@
            renderer="antialias:true" vr-mode-ui="enabled:false" device-orientation-permission-ui="enabled:false"
            style="display:none" raycaster="objects:.clickable" cursor="rayOrigin:mouse">
     <a-assets timeout="120000">
-      <a-asset-item id="nerv" src="red.glb"></a-asset-item>
-      <a-asset-item id="anx" src="green.glb"></a-asset-item>
-      <a-asset-item id="stress" src="blue.glb"></a-asset-item>
+      <img id="red-img" src="red.png">
+      <img id="green-img" src="green.png">
+      <img id="blue-img" src="blue.png">
       <img id="explosion-img" src="explosion.png">
       <audio id="hit-sound" src="hit.mp3" preload="auto"></audio>
     </a-assets>
@@ -120,6 +120,12 @@
     const modelsGroup = document.getElementById('models');
     let gameActive = false;
     let gameTimer;
+
+    const typeToImg = {
+      nerv: 'red-img',
+      anx: 'green-img',
+      stress: 'blue-img'
+    };
 
     const positions = [
       {type:'nerv', pos:' 4.5 0.5 -6', scale:0.70}, {type:'anx', pos:' -4.5 0.6 -6', scale:0.68},
@@ -156,10 +162,14 @@
         wrapper.setAttribute('position', item.pos);
         wrapper.setAttribute('scale', `${item.scale} ${item.scale} ${item.scale}`);
 
-        const model = document.createElement('a-entity');
-        model.setAttribute('gltf-model', `#${item.type}`);
+        // Симптом — PNG картинка
+        const model = document.createElement('a-plane');
+        model.setAttribute('src', `#${typeToImg[item.type]}`);
+        model.setAttribute('transparent', 'true');
+        model.setAttribute('look-at', '[camera]');
         wrapper.appendChild(model);
 
+        // Взрыв — PNG картинка
         const explosion = document.createElement('a-plane');
         explosion.setAttribute('src', '#explosion-img');
         explosion.setAttribute('transparent', 'true');
@@ -167,16 +177,6 @@
         explosion.setAttribute('scale', '0.01 0.01 0.01');
         explosion.setAttribute('look-at', '[camera]');
         wrapper.appendChild(explosion);
-
-        model.addEventListener('model-loaded', () => {
-          const tick = () => {
-            if (!wrapper.isConnected) return;
-            wrapper.object3D.lookAt(sceneEl.camera.el.object3D.position);
-            wrapper.object3D.rotateY(Math.PI);
-            requestAnimationFrame(tick);
-          };
-          tick();
-        });
 
         wrapper.addEventListener('click', function hit() {
           if (!gameActive) return;
@@ -190,7 +190,7 @@
           // Плавное увеличение
           explosion.setAttribute('animation__scale', `property:scale;to:${item.scale*6} ${item.scale*6} ${item.scale*6};dur:800;easing:easeOutExpo`);
 
-          // Вращение по оси Y — правильно (X Y Z = 0 360 0)
+          // Вращение по оси Y (вертикаль)
           explosion.setAttribute('animation__spin', `property:rotation;from:0 0 0;to:0 360 0;loop:true;dur:1200;easing:linear`);
 
           // Плавное затухание
@@ -241,4 +241,3 @@
   </script>
 </body>
 </html>
-
