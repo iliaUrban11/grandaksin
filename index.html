@@ -73,7 +73,7 @@
 </head>
 <body>
   <div id="startPage">
-    <div id="logo">ГРАНДАКСИН<br>ПРОТИВ</div>
+    <div id="logo">ГРАНДАКСИН<br>ПРОТИВ V4</div>
     <div id="rules">Совместите прицел с симптомом<br>и нажмите на экран<br><br>Уничтожьте как можно больше за 30 секунд!</div>
     <button id="startGameBtn">НАЧАТЬ ИГРУ</button>
   </div>
@@ -99,7 +99,7 @@
     <button id="playAgainBtn">ИГРАТЬ ЕЩЁ РАЗ</button>
   </div>
   <a-scene embedded arjs="trackingMethod:best;sourceType:webcam;debugUIEnabled:false"
-           renderer="antialias:true" vr-mode-ui="enabled:false" device-orientation-permission-ui="enabled:false"
+           renderer="antialias:true;alpha:true;logarithmicDepthBuffer:true" vr-mode-ui="enabled:false" device-orientation-permission-ui="enabled:false"
            style="display:none" raycaster="objects:.clickable" cursor="rayOrigin:mouse">
     <a-assets timeout="120000">
       <img id="red-img" src="red.png">
@@ -160,10 +160,14 @@
       positions.forEach(item => {
         const wrapper = document.createElement('a-entity');
         wrapper.classList.add('clickable');
-        wrapper.setAttribute('position', item.pos);
 
-        // Симптомы — PNG, увеличены в 3 раза
-        const modelScale = item.scale * 3;
+        // Парсим Z из позиции (например, "-6" из "4.5 0.5 -6")
+        const z = parseFloat(item.pos.split(' ')[2]);
+        // Добавляем небольшое смещение по Z в зависимости от расстояния
+        const zOffset = z * 0.02; // чем дальше — тем больше смещение
+        wrapper.setAttribute('position', item.pos + ` 0 0 ${zOffset}`);
+
+        const modelScale = item.scale * 3; // в 3 раза больше
         wrapper.setAttribute('scale', `${modelScale} ${modelScale} ${modelScale}`);
 
         const model = document.createElement('a-plane');
@@ -172,11 +176,11 @@
         model.setAttribute('look-at', '[camera]');
         wrapper.appendChild(model);
 
-        // Взрыв — PNG
         const explosion = document.createElement('a-plane');
         explosion.setAttribute('src', '#explosion-img');
         explosion.setAttribute('transparent', 'true');
         explosion.setAttribute('visible', 'false');
+        explosion.setAttribute('position', '0 0 -0.05'); // взрыв ближе к камере
         explosion.setAttribute('scale', '0.1 0.1 0.1');
         explosion.setAttribute('look-at', '[camera]');
         wrapper.appendChild(explosion);
@@ -190,13 +194,10 @@
           model.setAttribute('visible', 'false');
           explosion.setAttribute('visible', 'true');
 
-          // Плавное увеличение взрыва
           explosion.setAttribute('animation__scale', `property:scale;to:${modelScale*2} ${modelScale*2} ${modelScale*2};dur:1000;easing:easeOutCubic`);
 
-          // Плавное затухание
           explosion.setAttribute('animation__fade', `property:material.opacity;from:1;to:0;dur:1500;delay:500;easing:easeOutQuad`);
 
-          // Звук
           const sound = document.createElement('a-entity');
           sound.setAttribute('sound', 'src:#hit-sound;autoplay:true;volume:1');
           wrapper.appendChild(sound);
